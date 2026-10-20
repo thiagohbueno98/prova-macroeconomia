@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Macroeconomia ITA - Plataforma Completa (164 Questões)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .option-btn { transition: all 0.15s ease-in-out; }
+    .option-btn:hover:not(:disabled) { transform: translateX(4px); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col md:flex-row">
+
+  <!-- Sidebar -->
+  <aside class="w-full md:w-80 bg-gray-900 border-b md:border-b-0 md:border-r border-gray-800 flex flex-col shrink-0 md:h-screen md:sticky md:top-0">
+    <div class="p-5 border-b border-gray-800">
+      <div class="flex items-center justify-between text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
+        <span>ITA • Prof. Thiago Caliari</span>
+        <span class="bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">164 Questões</span>
+      </div>
+      <h1 class="text-xl font-extrabold text-white">Estudo Macroeconomia</h1>
+      <p class="text-xs text-gray-400 mt-1">Aulas 1 a 7.2 + Artigo Ciclicidade Fiscal</p>
+      
+      <!-- Placar Global -->
+      <div class="mt-4 bg-gray-800/80 rounded-lg p-3 border border-gray-700">
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-gray-300 font-medium">Desempenho Geral</span>
+          <span id="score-text" class="text-blue-400 font-bold">0 / 164</span>
+        </div>
+        <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+          <div id="score-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between items-center mt-2">
+          <span id="pct-text" class="text-[11px] text-emerald-400 font-semibold">0% de aproveitamento</span>
+          <button onclick="resetProgress()" class="text-[11px] text-gray-400 hover:text-red-400 underline">
+            Resetar tudo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu de Aulas -->
+    <nav id="module-nav" class="p-3 space-y-1.5 overflow-y-auto flex-1">
+      <!-- Renderizado via JS -->
+    </nav>
+  </aside>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 flex flex-col min-h-screen">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur border-b border-gray-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 id="current-module-title" class="text-base md:text-lg font-bold text-white">Carregando...</h2>
+        <p id="current-module-sub" class="text-xs text-gray-400"></p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex bg-gray-900 p-1 rounded-lg border border-gray-800">
+          <button id="tab-resumo" onclick="switchTab('resumo')" class="px-3.5 py-1.5 rounded-md text-xs md:text-sm font-semibold bg-blue-600 text-white">
+            📖 Resumo Completo
+          </button>
+          <button id="tab-questoes" onclick="switchTab('questoes')" class="px-3.5 py-1.5 rounded-md text-xs md:text-sm font-semibold text-gray-400 hover:text-white">
+            🎯 Lista da Aula
+          </button>
+          <button id="tab-todas" onclick="switchTab('todas')" class="px-3.5 py-1.5 rounded-md text-xs md:text-sm font-semibold text-gray-400 hover:text-white">
+            🔥 Todas (164)
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filtro de Questões (visível nas abas de questões) -->
+    <div id="filter-bar" class="hidden bg-gray-900/60 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-gray-400">Filtrar:</span>
+        <button onclick="setFilter('all')" id="flt-all" class="px-2.5 py-1 rounded bg-blue-600 text-white font-medium">Todas</button>
+        <button onclick="setFilter('unanswered')" id="flt-unanswered" class="px-2.5 py-1 rounded bg-gray-800 text-gray-300 hover:bg-gray-700">Não respondidas</button>
+        <button onclick="setFilter('wrong')" id="flt-wrong" class="px-2.5 py-1 rounded bg-gray-800 text-gray-300 hover:bg-gray-700">Erros para revisar</button>
+      </div>
+      <input type="text" id="search-input" oninput="renderContent()" placeholder="Buscar palavra-chave na questão..." class="bg-gray-950 border border-gray-700 rounded px-3 py-1 text-gray-200 focus:outline-none focus:border-blue-500 w-full sm:w-64">
+    </div>
+
+    <!-- Área Dinâmica -->
+    <div id="content-area" class="p-6 max-w-4xl mx-auto w-full space-y-6 pb-24">
+      <!-- Renderizado via JS -->
+    </div>
+  </main>
+
+<script>
+// Dados estruturados com TODAS as questões das 8 listas + Artigo Empírico
+const modulesData = [
+  {
+    id: "Aula 1",
+    title: "Aula 1: Medindo a Renda Nacional",
+    subtitle: "Cap. 23 Mankiw • PIB, Componentes, Real vs. Nominal, Deflator e Bem-Estar (19 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Definição Exata de PIB e Fluxo Circular</h3>
+          <p class="mb-3">Na macroeconomia, <strong>Renda Total = Despesa Total</strong> porque cada R$ 1 gasto por um comprador é R$ 1 de receita para o vendedor. O <strong>PIB</strong> é o <em>valor de mercado de todos os bens e serviços finais produzidos em uma economia em dado período de tempo</em>.</p>
+          <ul class="list-disc pl-5 space-y-1 text-xs text-gray-300">
+            <li><strong>Valor de mercado:</strong> Usa preços de mercado para somar itens diferentes na mesma unidade (R$). Exclui trabalho doméstico para si mesmo e lazer.</li>
+            <li><strong>Bens Finais vs. Intermediários:</strong> Só entram bens finais. A farinha usada para fazer pão para venda não é somada separadamente (evita dupla contagem).</li>
+            <li><strong>Produção Corrente:</strong> Venda de bens usados (produzidos em anos anteriores) <strong>não entra</strong> no PIB atual.</li>
+            <li><strong>Critério Geográfico (Interno):</strong> Conta tudo produzido <em>dentro das fronteiras do Brasil</em>, seja por empresa brasileira ou estrangeira.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Componentes do PIB: <code class="text-emerald-400">Y = C + I + G + EL</code></h3>
+          <div class="grid md:grid-cols-2 gap-3 text-xs">
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-white">Consumo (C):</strong> Gastos das famílias em bens tangíveis (carros, comida) e serviços intangíveis (educação, limpeza).
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-white">Investimento (I):</strong> Compra de máquinas/equipamentos, estruturas/fábricas, <strong>construção de casas novas</strong> e <strong>variação de estoques</strong> (produziu e não vendeu no ano = entra como estoque em I!). <span class="text-amber-400 block mt-1">⚠️ Comprar ações ou títulos financeiros NÃO é investimento macroeconômico!</span>
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-white">Compras do Governo (G):</strong> Gastos federais, estaduais e municipais em bens e serviços. <span class="text-amber-400 block mt-1">⚠️ Exclui transferências (INSS, aposentadorias, Bolsa Família) pois não compram bem/serviço novo.</span>
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-white">Exportações Líquidas (EL = X - M):</strong> Exportações menos Importações. Gastos com importados entram em C, I ou G e são subtraídos em M.
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">3. PIB Nominal, PIB Real, Deflator e Bem-Estar</h3>
+          <ul class="space-y-1.5 text-xs">
+            <li>• <strong>PIB Nominal:</strong> <code class="text-blue-300">∑ (P_atual × Q_atual)</code> → varia por preços e quantidades.</li>
+            <li>• <strong>PIB Real:</strong> <code class="text-emerald-300">∑ (P_base × Q_atual)</code> → preços constantes do ano-base (isola variação física da produção / corrige inflação).</li>
+            <li>• <strong>Deflator do PIB:</strong> <code class="text-purple-300">100 × (PIB Nominal / PIB Real)</code>. Taxa de inflação = <code class="text-purple-300">(Deflator_2 - Deflator_1) / Deflator_1</code>.</li>
+            <li>• <strong>Bem-estar:</strong> O PIB per capita correlaciona-se positivamente com expectativa de vida, capital humano e complexidade econômica (ECI), mas <strong>não mede</strong> distribuição de renda, lazer, meio ambiente e trabalho não remunerado.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Durante determinado ano, uma montadora produz um automóvel no Brasil e o vende por R\$ 120.000 a uma família brasileira. Considerando a definição de PIB apresentada na aula, essa operação:", o:["A) não entra no PIB, pois automóveis são bens duráveis.","B) entra no PIB como consumo, no valor de R\$ 120.000.","C) entra no PIB como investimento, pois o automóvel é um bem durável.","D) entra no PIB apenas se a montadora for uma empresa brasileira.","E) não entra no PIB, pois o PIB mede apenas serviços."], c:1, e:"O automóvel é um bem final produzido dentro do país no período corrente e adquirido por uma família, sendo contabilizado como consumo."},
+      {q:"2. Uma padaria compra farinha por R\$ 2.000 e utiliza integralmente essa farinha para produzir pães que vende aos consumidores por R\$ 5.000. Considerando apenas essas operações, qual valor deve ser contabilizado no PIB?", o:["A) R\$ 2.000.","B) R\$ 3.000.","C) R\$ 5.000.","D) R\$ 7.000.","E) R\$ 10.000."], c:2, e:"O PIB contabiliza apenas o valor do bem final (R\$ 5.000). Somar a farinha e o pão geraria dupla contagem."},
+      {q:"3. Uma pessoa compra, em 2026, por R\$ 70.000, um automóvel usado que havia sido produzido e vendido originalmente em 2022. Desconsiderando eventuais serviços de intermediação, essa transação:", o:["A) aumenta o PIB de 2026 em R\$ 70.000.","B) aumenta o consumo de 2026, mas não o PIB.","C) aumenta o investimento de 2026.","D) não é contabilizada no PIB de 2026.","E) reduz o PIB de 2026."], c:3, e:"O PIB considera apenas a produção realizada no período corrente. Bens usados já foram contabilizados no ano em que foram fabricados."},
+      {q:"4. Uma empresa estrangeira possui uma fábrica localizada no Brasil. Durante o ano, essa fábrica produz R\$ 30 milhões em bens finais. Essa produção:", o:["A) não integra o PIB brasileiro porque a empresa é estrangeira.","B) integra o PIB do país de origem da empresa, mas não o brasileiro.","C) integra o PIB brasileiro porque a produção ocorreu dentro das fronteiras brasileiras.","D) só integra o PIB brasileiro se os produtos forem vendidos a brasileiros.","E) só integra o PIB brasileiro se os produtos forem exportados."], c:2, e:"O critério relevante para o PIB é geográfico (onde ocorre a produção), e não a nacionalidade do proprietário."},
+      {q:"5. Qual das operações abaixo é classificada como investimento (I) na contabilidade do PIB apresentada na aula?", o:["A) Uma família compra ações de uma empresa.","B) Um investidor compra títulos financeiros.","C) Uma empresa compra uma nova máquina para sua fábrica.","D) Uma família compra alimentos no supermercado.","E) Um aposentado recebe uma transferência do governo."], c:2, e:"Investimento corresponde ao gasto em capital físico novo, estruturas e estoques. Compra de ativos financeiros é aplicação de poupança."},
+      {q:"6. Por que o pagamento do INSS a um aposentado não é contabilizado diretamente em G, as compras do governo?", o:["A) Porque aposentados não participam da economia.","B) Porque G inclui apenas gastos dos governos estaduais.","C) Porque transferências não representam compra de bens ou serviços pelo governo.","D) Porque transferências são classificadas como investimento.","E) Porque todo pagamento do governo é excluído do PIB."], c:2, e:"Transferências de renda não envolvem contrapartida de produção de bens ou serviços para o governo (entrarão em C quando forem gastas)."},
+      {q:"7. Considere uma economia na qual ocorreram os seguintes gastos (em R$ bilhões): Consumo = 800; Investimento = 200; Compras do governo = 250; Exportações = 150; Importações = 100. O PIB dessa economia é:", o:["A) R\$ 1.100 bilhões.","B) R\$ 1.200 bilhões.","C) R\$ 1.300 bilhões.","D) R\$ 1.400 bilhões.","E) R\$ 1.500 bilhões."], c:2, e:"Y = C + I + G + (X - M) = 800 + 200 + 250 + (150 - 100) = 1.300 bilhões."},
+      {q:"8. Uma fábrica brasileira produz 100 equipamentos no ano, mas consegue vender apenas 90. Os dez equipamentos restantes ficam armazenados para venda futura. Segundo a contabilidade apresentada na aula:", o:["A) os dez equipamentos não entram no PIB porque não foram vendidos.","B) entram no PIB como consumo.","C) entram no PIB como compras governamentais.","D) entram no PIB como investimento em estoques.","E) somente entrarão no PIB no ano em que forem vendidos."], c:3, e:"Bens produzidos no período e ainda não vendidos integram a variação de estoques, contabilizada como Investimento (I)."},
+      {q:"9. Em uma economia que produz apenas café e livros, os dados são: Ano 1: Café (P=R\$ 5, Q=100), Livros (P=R\$ 20, Q=20). Ano 2: Café (P=R\$ 6, Q=120), Livros (P=R\$ 25, Q=24). Qual é o PIB nominal do Ano 2?", o:["A) R\$ 900.","B) R\$ 1.000.","C) R\$ 1.200.","D) R\$ 1.320.","E) R\$ 1.500."], c:3, e:"PIB Nominal Ano 2 usa preços e quantidades do Ano 2: (6 × 120) + (25 × 24) = 720 + 600 = R\$ 1.320."},
+      {q:"10. Utilizando os mesmos dados da questão anterior e tomando o Ano 1 como ano-base, qual é o PIB real do Ano 2?", o:["A) R\$ 900.","B) R\$ 960.","C) R\$ 1.080.","D) R\$ 1.200.","E) R\$ 1.320."], c:2, e:"PIB Real Ano 2 usa quantidades do Ano 2 e preços do Ano 1: (5 × 120) + (20 × 24) = 600 + 480 = R\$ 1.080."},
+      {q:"11. Suponha que o PIB nominal de uma economia seja R\$ 575 bilhões e seu PIB real seja R\$ 500 bilhões. O deflator do PIB é:", o:["A) 87.","B) 100.","C) 107.","D) 115.","E) 175."], c:3, e:"Deflator = 100 × (PIB Nominal / PIB Real) = 100 × (575 / 500) = 115."},
+      {q:"12. O deflator do PIB passou de 120 para 126 entre dois anos consecutivos. Com base na medida de inflação apresentada na aula, a taxa de inflação foi:", o:["A) 4%.","B) 5%.","C) 6%.","D) 20%.","E) 26%."], c:1, e:"Inflação = (126 - 120) / 120 = 6 / 120 = 0,05 = 5%."},
+      {q:"13. O PIB nominal de um país cresceu 12% em determinado período, enquanto seu PIB real cresceu apenas 3%. Qual interpretação é consistente com os conceitos apresentados na aula?", o:["A) Toda a expansão do PIB nominal representa aumento da quantidade produzida.","B) A produção necessariamente caiu.","C) A diferença entre o comportamento das duas medidas decorre do fato de que o PIB nominal é afetado tanto por preços quanto por quantidades.","D) O PIB real aumentou mais porque incorpora a inflação.","E) PIB nominal e PIB real deveriam necessariamente apresentar a mesma taxa de crescimento."], c:2, e:"O PIB nominal cresce por aumento de quantidades e de preços; o PIB real mantém preços constantes para medir apenas o crescimento da produção."},
+      {q:"14. Considere uma economia que produz dois bens. 2025 (ano-base): Bem A (P=R\$ 10, Q=100); Bem B (P=R\$ 5, Q=200). 2026: Bem A (P=R\$ 12, Q=110); Bem B (P=R\$ 6, Q=180). Qual alternativa apresenta o PIB nominal de 2026, o PIB real de 2026 e o deflator de 2026?", o:["A) R\$ 2.000; R\$ 2.000; 100.","B) R\$ 2.400; R\$ 2.000; 120.","C) R\$ 2.400; R\$ 2.100; 114,3.","D) R\$ 2.200; R\$ 2.400; 91,7.","E) R\$ 2.100; R\$ 2.400; 87,5."], c:1, e:"Nominal 2026 = 12×110 + 6×180 = 2.400. Real 2026 = 10×110 + 5×180 = 2.000. Deflator = 100 × (2.400 / 2.000) = 120."},
+      {q:"15. Uma economia apresenta (em R\$ bi): C = 1.200, I = 350, G = 500, Exportações = 250, Importações = 400. No ano seguinte, mantendo os demais componentes constantes, as importações aumentam para R\$ 450 bilhões. Qual será, contabilmente, a variação do PIB?", o:["A) Aumentará R\$ 50 bilhões.","B) Diminuirá R\$ 50 bilhões.","C) Aumentará R\$ 450 bilhões.","D) Diminuirá R\$ 450 bilhões.","E) Permanecerá necessariamente inalterado."], c:1, e:"Pela identidade Y = C + I + G + (X - M), mantendo os demais constantes, um aumento de 50 nas importações reduz EL em 50 e diminui Y em R\$ 50 bilhões."},
+      {q:"16. Dois países têm a mesma população. O País A possui PIB real de R\$ 2 trilhões e o País B de R\$ 1,5 trilhão. Um analista conclui: 'Logo, todos os habitantes do País A possuem maior bem-estar que os do País B.' A conclusão é:", o:["A) correta, pois o PIB mede perfeitamente o bem-estar individual.","B) correta, pois qualquer país com maior PIB necessariamente possui melhor distribuição de renda.","C) inadequada, pois o PIB não mede aspectos como distribuição da renda, qualidade ambiental e lazer.","D) inadequada apenas porque deveria utilizar PIB nominal.","E) correta desde que os dois países tenham a mesma moeda."], c:2, e:"O PIB real per capita indica o padrão médio de vida, mas não captura desigualdade/distribuição de renda, lazer ou meio ambiente."},
+      {q:"17. Em determinado país, durante um ano, ocorreu simultaneamente: aumento expressivo dos preços e nenhuma alteração nas quantidades produzidas de todos os bens e serviços finais. Qual combinação é compatível?", o:["A) PIB nominal aumenta e PIB real permanece constante.","B) PIB nominal permanece constante e PIB real aumenta.","C) PIB nominal e PIB real aumentam na mesma proporção.","D) PIB nominal cai e PIB real aumenta.","E) PIB nominal e PIB real necessariamente caem."], c:0, e:"Como as quantidades não mudaram, o PIB real fica constante; como os preços subiram, o PIB nominal aumenta."},
+      {q:"18. Em 2025, o PIB nominal foi R\$ 900 bilhões e seu deflator foi 120. Em 2026, o PIB nominal aumentou para R\$ 1.080 bilhões e o deflator passou para 135. Qual foi aproximadamente o crescimento do PIB real entre 2025 e 2026?", o:["A) 0%.","B) 5,0%.","C) 6,7%.","D) 12,5%.","E) 20,0%."], c:2, e:"PIB Real 2025 = 900 / 1,20 = 750. PIB Real 2026 = 1.080 / 1,35 = 800. Crescimento = (800 / 750) - 1 = 6,67% ≈ 6,7%."},
+      {q:"19. Em uma economia ocorrem: famílias compram R\$ 600 mi em bens internos; empresas compram R\$ 200 mi em máquinas internas; governo compra R\$ 150 mi em serviços internos; estrangeiros compram R\$ 100 mi em bens produzidos no país; famílias compram R\$ 80 mi em bens importados. Qual é o PIB (nota do gabarito oficial: valor exato R\$ 1,05 bi)?", o:["A) R\$ 870 milhões.","B) R\$ 950 milhões.","C) R\$ 970 milhões.","D) R\$ 1,03 bilhão (Gabarito oficial: R\$ 1,05 bilhão).","E) R\$ 1,13 bilhão."], c:3, e:"C = 600 + 80 = 680; I = 200; G = 150; EL = 100 - 80 = 20. Logo Y = 680 + 200 + 150 + 20 = 1.050 milhões (R\$ 1,05 bi, marcada como D no gabarito da lista)."}
+    ]
+  },
+  {
+    id: "Aula 2",
+    title: "Aula 2: Poupança, Investimento e Sistema Financeiro",
+    subtitle: "Cap. 26 Mankiw • Poupança Privada/Pública, Fundos Emprestáveis e Crowding-Out (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Identidades da Economia Fechada (<code class="text-emerald-400">S = I</code>)</h3>
+          <p class="text-xs mb-3">Em uma economia fechada (EL = 0), <code class="text-white">Y = C + I + G</code>, o que implica <code class="text-emerald-400 font-bold">Y - C - G = I</code>.</p>
+          <div class="grid md:grid-cols-3 gap-3 text-xs">
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-blue-400">Poupança Privada:</strong><br><code>S_priv = Y - T - C</code>
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-purple-400">Poupança Pública:</strong><br><code>S_pub = T - G</code><br>(Se T &gt; G: superávit; se T &lt; G: déficit).
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-emerald-400">Poupança Nacional:</strong><br><code>S = S_priv + S_pub = Y - C - G = I</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. O Mercado de Fundos Emprestáveis</h3>
+          <ul class="text-xs space-y-1.5 mb-3">
+            <li>• <strong>Oferta de Fundos:</strong> Provém da Poupança Nacional (S). Tem <strong>inclinação positiva</strong> em relação à taxa de juros real (<em>r</em>), pois juros maiores remuneram melhor o poupador.</li>
+            <li>• <strong>Demanda por Fundos:</strong> Provém do Investimento (I). Tem <strong>inclinação negativa</strong> em relação a <em>r</em>, pois juros maiores encarecem o financiamento de máquinas e imóveis.</li>
+            <li>• <strong>Política 1 (Incentivo à Poupança):</strong> Desloca a <strong>Oferta (S) para a direita</strong> → reduz <em>r</em> e aumenta a quantidade de fundos/investimento.</li>
+            <li>• <strong>Política 2 (Incentivo/Crédito Fiscal ao Investimento):</strong> Desloca a <strong>Demanda (I) para a direita</strong> → aumenta <em>r</em> e aumenta a quantidade de equilíbrio.</li>
+            <li>• <strong>Política 3 (Déficit Orçamentário e Crowding-Out):</strong> G &gt; T reduz a poupança pública e desloca a <strong>Oferta (S) para a esquerda</strong> → aumenta <em>r</em> e reduz o investimento privado (<em>efeito crowding-out</em>), prejudicando o crescimento de longo prazo.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. A poupança privada de uma economia com Y = 1.000, T = 200 e C = 650 é:", o:["A) R$ 450.","B) R$ 150.","C) R$ 50.","D) R$ 200.","E) R$ 350."], c:1, e:"Poupança privada = Y - T - C = 1.000 - 200 - 650 = R$ 150."},
+      {q:"2. Se T = 300 e G = 250, a poupança pública é:", o:["A) R$ 550.","B) R$ 50.","C) -R$ 50.","D) R$ 250.","E) R$ 300."], c:1, e:"Poupança pública = T - G = 300 - 250 = R$ 50 (superávit)."},
+      {q:"3. Em uma economia fechada, qual relação é apresentada na aula?", o:["A) Poupança nacional = investimento.","B) Exportações = importações + investimento.","C) Consumo = investimento.","D) Poupança privada = gastos do governo.","E) Impostos = investimento."], c:0, e:"Da identidade Y = C + I + G, obtém-se I = Y - C - G, que é exatamente a poupança nacional (S = I)."},
+      {q:"4. Qual operação é investimento no sentido macroeconômico usado na aula?", o:["A) Uma família compra cotas de fundo mútuo.","B) Uma empresa compra uma nova máquina.","C) Uma família compra ações.","D) Um investidor compra títulos públicos.","E) Uma pessoa transfere dinheiro para a poupança."], c:1, e:"Investimento macroeconômico é a compra de capital físico novo (máquinas, fábricas, imóveis novos). Ativos financeiros são poupança."},
+      {q:"5. Quando T é menor que G, o governo apresenta:", o:["A) superávit e poupança pública negativa.","B) déficit orçamentário e poupança pública negativa.","C) superávit e poupança pública positiva.","D) equilíbrio e poupança zero.","E) déficit e poupança pública positiva."], c:1, e:"Se G > T (ou T < G), há déficit orçamentário e a poupança pública (T - G) é negativa."},
+      {q:"6. No mercado de fundos emprestáveis, a oferta de fundos provém principalmente:", o:["A) do consumo.","B) das compras do governo.","C) das importações.","D) da depreciação do capital.","E) da poupança."], c:4, e:"A poupança nacional (privada + pública) é a fonte da oferta de fundos emprestáveis."},
+      {q:"7. Se Y = 2.000, C = 1.200 e G = 500 em economia fechada, poupança nacional e investimento são, respectivamente:", o:["A) R$ 500 e R$ 500.","B) R$ 2.000 e R$ 300.","C) R$ 300 e R$ 300.","D) R$ 800 e R$ 300.","E) R$ 300 e R$ 800."], c:2, e:"S = Y - C - G = 2.000 - 1.200 - 500 = 300. Em economia fechada, S = I = 300."},
+      {q:"8. Mantida a demanda, um incentivo tributário que eleva a poupança desloca a oferta de fundos emprestáveis para a direita. O resultado indicado na aula é:", o:["A) alta da taxa e queda da quantidade.","B) alta da taxa e alta da quantidade.","C) queda da taxa e queda da quantidade.","D) nenhuma alteração.","E) queda da taxa de juros e aumento da quantidade de fundos."], c:4, e:"O deslocamento da oferta de fundos para a direita reduz a taxa de juros de equilíbrio e eleva a quantidade de fundos emprestados."},
+      {q:"9. Um crédito fiscal ao investimento, mantida a oferta de fundos, tende a:", o:["A) reduzir demanda, juros e quantidade.","B) aumentar oferta e reduzir juros.","C) reduzir oferta e elevar juros.","D) não alterar o mercado.","E) aumentar a demanda por fundos, a taxa de juros e a quantidade de equilíbrio."], c:4, e:"O incentivo ao investimento desloca a curva de demanda por fundos para a direita, elevando juros e quantidade."},
+      {q:"10. Por que a curva de oferta de fundos emprestáveis é positivamente inclinada no modelo?", o:["A) Taxas de juros maiores tornam a poupança mais atraente.","B) Taxas maiores tornam empréstimos mais baratos.","C) Taxas maiores reduzem toda poupança pública.","D) Taxas maiores aumentam consumo necessariamente.","E) Taxas maiores eliminam investimento."], c:0, e:"A taxa de juros é o retorno da poupança; juros mais altos incentivam as famílias a poupar mais."},
+      {q:"11. Por que a curva de demanda por fundos emprestáveis é negativamente inclinada?", o:["A) Juros maiores barateiam projetos.","B) Juros não afetam investimento.","C) Investimento é a oferta de fundos.","D) Juros menores reduzem o custo dos empréstimos e estimulam investimento.","E) Juros menores reduzem a poupança pública automaticamente."], c:3, e:"A taxa de juros é o custo do empréstimo; juros menores tornam mais projetos de investimento viáveis."},
+      {q:"12. Se a taxa de juros estiver abaixo da taxa de equilíbrio, o material indica que:", o:["A) a oferta e demanda caem a zero.","B) a demanda por fundos excede a oferta e a taxa tende a subir.","C) a oferta excede a demanda e a taxa sobe.","D) a demanda excede a oferta e a taxa cai.","E) há equilíbrio automático sem ajuste."], c:1, e:"Juros abaixo do equilíbrio geram escassez de fundos (demanda > oferta), pressionando a taxa de juros para cima."},
+      {q:"13. Um aumento do déficit orçamentário, mantidas as demais condições, reduz a poupança nacional. No mercado de fundos, isso desloca:", o:["A) a oferta para a direita.","B) nenhuma curva.","C) a oferta para a esquerda.","D) a demanda para a esquerda.","E) a demanda para a direita."], c:2, e:"O déficit reduz a poupança pública e a poupança nacional, deslocando a oferta de fundos emprestáveis para a esquerda."},
+      {q:"14. O efeito crowding-out descrito na aula corresponde:", o:["A) ao aumento automático do investimento por déficits.","B) à substituição de consumo por exportações.","C) à queda de impostos que sempre eleva poupança pública.","D) à compra de ações pelas famílias.","E) à redução do investimento quando o governo toma recursos para financiar seu déficit."], c:4, e:"Crowding-out é a queda do investimento privado provocada pela alta dos juros quando o governo reduz a poupança nacional com déficits."},
+      {q:"15. Y = 3.000, T = 700, C = 1.900 e G = 800. Quais são, respectivamente, poupança privada, pública e nacional?", o:["A) 1.100, -100 e 1.000.","B) 400, -800 e -400.","C) 400, -100 e 300.","D) 400, 100 e 500.","E) 300, -100 e 200."], c:2, e:"Privada = 3.000 - 700 - 1.900 = 400; Pública = 700 - 800 = -100; Nacional = 400 - 100 = 300."},
+      {q:"16. Partindo do equilíbrio, o governo passa de orçamento equilibrado para déficit sem alterar outros determinantes. Qual encadeamento é compatível com a aula?", o:["A) Poupança cai, juros caem e investimento sobe.","B) Poupança nacional cai, oferta de fundos cai, juros sobem e investimento cai.","C) Poupança sobe, juros caem e investimento sobe.","D) Demanda cai, juros caem e investimento sobe.","E) Oferta sobe, juros sobem e investimento cai."], c:1, e:"Descreve exatamente o mecanismo de crowding-out no mercado de fundos emprestáveis."},
+      {q:"17. Duas políticas são comparadas: incentivo à poupança e incentivo ao investimento. Qual diferença é correta?", o:["A) Ambas deslocam apenas a oferta.","B) Ambas deslocam apenas a demanda.","C) A primeira desloca demanda; a segunda oferta.","D) Nenhuma altera o mercado.","E) A primeira desloca a oferta; a segunda desloca a demanda de fundos."], c:4, e:"A poupança determina a curva de oferta de fundos; o investimento determina a curva de demanda."},
+      {q:"18. Se um déficit reduz a poupança pública em R$ 100 e nada mais muda inicialmente, qual efeito direto ocorre sobre a poupança nacional?", o:["A) Não muda.","B) Cai R$ 200.","C) Sobe R$ 200.","D) Cai R$ 100.","E) Sobe R$ 100."], c:3, e:"Como S = S_priv + S_pub, uma queda de R$ 100 em S_pub reduz diretamente S em R$ 100."},
+      {q:"19. Por que déficits persistentes podem afetar o padrão de vida futuro segundo o material?", o:["A) Porque eliminam contabilmente o consumo.","B) Porque fazem S ser diferente de I em economia fechada.","C) Porque transformam investimento em consumo.","D) Porque impedem toda poupança privada.","E) Porque o crowding-out reduz investimento, importante para o crescimento de longo prazo."], c:4, e:"Menor investimento significa menor acumulação de estoque de capital e menor crescimento da produtividade no futuro."},
+      {q:"20. Em uma economia fechada, Y = 5.000, C = 3.000, G = 1.000. Se G sobe para 1.200 e Y e C permanecem constantes, o investimento compatível com a identidade passa de:", o:["A) 1.000 para 1.200.","B) 800 para 1.000.","C) 2.000 para 1.800.","D) 1.000 para 1.000.","E) 1.000 para 800."], c:4, e:"Inicialmente I = 5.000 - 3.000 - 1.000 = 1.000. Depois I = 5.000 - 3.000 - 1.200 = 800."}
+    ]
+  },
+  {
+    id: "Aula 3",
+    title: "Aula 3: O Sistema Monetário",
+    subtitle: "Cap. 29 Mankiw • Moeda, Reservas Fracionárias, Multiplicador e BACEN (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Moeda: Funções, Tipos e Agregados</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>3 Funções:</strong> (1) <em>Meio de troca</em> (usado para comprar B&S); (2) <em>Unidade de conta</em> (padrão para anunciar preços e registrar débitos); (3) <em>Reserva de valor</em> (transfere poder de compra do presente para o futuro).</li>
+            <li>• <strong>Tipos:</strong> <em>Moeda-mercadoria</em> (tem valor intrínseco, ex: ouro) vs. <em>Moeda fiduciária</em> (sem valor intrínseco, estabelecida por decreto governamental, ex: Real).</li>
+            <li>• <strong>M1:</strong> Papel-moeda em poder do público (PMPP) + Depósitos à vista.</li>
+            <li>• <strong>M2:</strong> M1 + Poupança + Títulos privados emitidos pelo SFN.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Conta-T, Reservas Fracionárias e Multiplicador</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>Conta-T do Banco:</strong> <strong>Ativos</strong> = Reservas + Empréstimos concedidos. <strong>Passivos</strong> = Depósitos dos clientes.</li>
+            <li>• <strong>Razão de Reserva (R):</strong> Fração dos depósitos mantida em reservas (<code class="text-white">R = Reservas / Depósitos</code>).</li>
+            <li>• <strong>Multiplicador Monetário:</strong> <code class="text-emerald-400 font-bold">m = 1 / R</code>. Cada R$ 1 de reserva gera <code class="text-emerald-400">1 / R</code> reais de oferta de moeda. (Com 100% de reservas, R = 1, m = 1 e os bancos não criam moeda adicional).</li>
+            <li>• <strong>Cria moeda, mas não cria riqueza:</strong> Empréstimos dão moeda ao tomador, mas criam dívida de igual valor.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">3. As 3 Ferramentas do BACEN</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>1. <strong>Operações de Mercado Aberto (Open-Market):</strong> Compra de títulos públicos (injeta R$ e <em>aumenta</em> a oferta de moeda) ou venda de títulos (retira R$ e <em>reduz</em> a oferta). É a mais utilizada.</li>
+            <li>2. <strong>Reservas Compulsórias:</strong> Reduzir a exigência compulsória reduz R, eleva 1/R e aumenta a moeda.</li>
+            <li>3. <strong>Taxa de Desconto (Redesconto):</strong> Juros dos empréstimos do BACEN aos bancos. Reduzir a taxa aumenta reservas e moeda.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Qual função da moeda permite expressar preços e registrar débitos em uma medida comum?", o:["A) Meio de troca.","B) Reserva de valor.","C) Reserva compulsória.","D) Multiplicador monetário.","E) Unidade de conta."], c:4, e:"Unidade de conta é o padrão usado para anunciar preços e registrar débitos."},
+      {q:"2. Moeda fiduciária é:", o:["A) ouro mantido como reserva.","B) moeda sem valor intrínseco usada como moeda por decreto governamental.","C) mercadoria com valor intrínseco.","D) apenas depósitos bancários.","E) qualquer ativo que pague juros."], c:1, e:"Moeda fiduciária não possui valor intrínseco e circula por decreto governamental (contrasta com moeda-mercadoria)."},
+      {q:"3. No material, M1 é composto por:", o:["A) apenas papel-moeda.","B) M2 menos depósitos à vista.","C) poupança e títulos privados apenas.","D) reservas bancárias e empréstimos.","E) papel-moeda em poder do público e depósitos à vista."], c:4, e:"M1 = PMPP (papel-moeda em poder do público) + depósitos à vista."},
+      {q:"4. Em uma conta-T bancária, depósitos são classificados como:", o:["A) capital físico.","B) oferta monetária do BACEN.","C) passivos do banco.","D) ativos do banco.","E) reservas excedentes."], c:2, e:"Depósitos representam obrigações/dívidas do banco para com os depositantes (passivos)."},
+      {q:"5. Em uma conta-T, empréstimos concedidos pelo banco são:", o:["A) moeda corrente.","B) ativos.","C) passivos.","D) depósitos.","E) reservas compulsórias necessariamente."], c:1, e:"Empréstimos representam direitos de recebimento do banco contra os tomadores (ativos)."},
+      {q:"6. Em um sistema de reservas fracionárias, os bancos:", o:["A) mantêm uma fração dos depósitos como reservas e emprestam o restante.","B) mantêm sempre 100% dos depósitos.","C) não realizam empréstimos.","D) eliminam depósitos à vista.","E) não afetam a oferta de moeda."], c:0, e:"Sob reservas fracionárias, apenas uma fração R fica retida e o restante (1 - R) é emprestado, criando moeda."},
+      {q:"7. Um banco possui R$ 200 em depósitos e mantém R$ 30 em reservas. Sua razão de reserva é:", o:["A) 20%.","B) 30%.","C) 85%.","D) 15%.","E) 10%."], c:3, e:"R = Reservas / Depósitos = 30 / 200 = 0,15 = 15%."},
+      {q:"8. Se R = 20%, o multiplicador monetário apresentado na aula é:", o:["A) 10.","B) 20.","C) 5.","D) 2.","E) 4."], c:2, e:"Multiplicador = 1 / R = 1 / 0,20 = 5."},
+      {q:"9. Com R = 10%, R$ 100 de reservas podem sustentar, no exemplo simplificado da aula, oferta monetária total de:", o:["A) R$ 100.","B) R$ 110.","C) R$ 900.","D) R$ 10.000.","E) R$ 1.000."], c:4, e:"Multiplicador = 1 / 0,10 = 10. Oferta total = 100 × 10 = R$ 1.000."},
+      {q:"10. Uma pessoa deposita R$ 100 em um banco que mantém 100% de reservas. Nesse caso, a oferta de moeda:", o:["A) sobe para R$ 1.000.","B) depende do multiplicador 10.","C) permanece R$ 100.","D) sobe para R$ 200.","E) cai a zero."], c:2, e:"Com 100% de reservas não há empréstimos: R$ 100 em papel-moeda trocam-se por R$ 100 em depósitos, mantendo a oferta em R$ 100."},
+      {q:"11. Com depósito de R$ 100 e R = 10%, o primeiro banco mantém reservas de R$ 10 e pode emprestar:", o:["A) R$ 10.","B) R$ 100.","C) R$ 110.","D) R$ 1.000.","E) R$ 90."], c:4, e:"Retém 10% (R$ 10) e empresta os 90% restantes (R$ 90)."},
+      {q:"12. Por que a concessão de empréstimos por bancos de reservas fracionárias aumenta a oferta de moeda?", o:["A) Porque destrói passivos bancários.","B) Porque transforma todos os depósitos em papel-moeda.","C) Porque elimina reservas.","D) Porque cria depósitos/moeda para tomadores sem eliminar o depósito original.","E) Porque cria riqueza líquida equivalente."], c:3, e:"O depositante continua com seu depósito à vista disponível enquanto o tomador recebe nova moeda/depósito."},
+      {q:"13. Para aumentar a oferta de moeda por operações de mercado aberto, o BACEN deve:", o:["A) impedir depósitos.","B) exigir reservas de 100%.","C) comprar títulos.","D) vender títulos.","E) aumentar compulsórios."], c:2, e:"A compra de títulos públicos pelo BACEN injeta reais no sistema bancário, ampliando reservas e a oferta monetária."},
+      {q:"14. Se o BACEN aumenta a reserva compulsória, mantendo o restante constante, o efeito esperado é:", o:["A) nenhuma alteração no multiplicador.","B) eliminação de passivos.","C) redução da capacidade de criação de moeda pelos bancos.","D) aumento do multiplicador.","E) aumento dos empréstimos."], c:2, e:"Maior compulsório aumenta R, reduz o multiplicador (1/R) e diminui a criação de moeda."},
+      {q:"15. Um sistema recebe R$ 500 em novas reservas e R = 25%. No modelo simplificado, qual aumento máximo da oferta monetária é compatível com o multiplicador?", o:["A) R$ 4.000.","B) R$ 2.000.","C) R$ 125.","D) R$ 500.","E) R$ 1.500."], c:1, e:"m = 1 / 0,25 = 4. Aumento máximo = 500 × 4 = R$ 2.000."},
+      {q:"16. Se R cai de 20% para 10%, o multiplicador monetário passa de:", o:["A) 10 para 5.","B) 20 para 10.","C) 5 para 20.","D) 2 para 1.","E) 5 para 10."], c:4, e:"De 1 / 0,20 = 5 para 1 / 0,10 = 10."},
+      {q:"17. Um banco tem depósitos de R$ 1.000 e razão de reserva de 10%. Se mantém exatamente a razão prevista, sua conta-T pode mostrar:", o:["A) reservas 900 e empréstimos 100.","B) reservas 1.000 e empréstimos 1.000.","C) reservas 10 e empréstimos 990.","D) reservas 100 e empréstimos 1.000.","E) reservas 100 e empréstimos 900."], c:4, e:"10% de R$ 1.000 = R$ 100 em reservas e os R$ 900 restantes em empréstimos."},
+      {q:"18. Compare dois sistemas com os mesmos R$ 100 iniciais: um com 100% de reservas e outro com R = 10%. Qual afirmação é consistente?", o:["A) No primeiro não há criação bancária adicional; no segundo o processo de empréstimos pode expandir a moeda.","B) Ambos geram multiplicador 10.","C) O sistema de 100% cria mais moeda.","D) O sistema fracionário não altera depósitos.","E) Ambos eliminam moeda corrente e depósitos."], c:0, e:"Reservas de 100% não expandem a moeda; reservas fracionárias multiplicam os meios de pagamento via empréstimos."},
+      {q:"19. O BACEN vende títulos ao público. Mantidas as demais condições, qual sequência é coerente com a aula?", o:["A) Reservas sobem e a oferta cresce.","B) Compulsórios caem automaticamente.","C) O multiplicador aumenta necessariamente.","D) Depósitos crescem sem alteração de reservas.","E) Reais saem de circulação, reservas bancárias caem e a oferta de moeda tende a cair."], c:4, e:"A venda de títulos recolhe reais do mercado, diminuindo reservas bancárias e contraindo a oferta monetária."},
+      {q:"20. Se os bancos decidem manter reservas acima do mínimo, sem mudança no compulsório, em relação ao caso em que emprestavam todo o excedente, a criação de moeda tende a ser:", o:["A) zero em qualquer caso.","B) menor.","C) maior.","D) idêntica necessariamente.","E) infinita."], c:1, e:"Reter reservas excedentes reduz o volume emprestado e diminui o multiplicador efetivo."}
+    ]
+  },
+  {
+    id: "Aula 4",
+    title: "Aula 4: Macroeconomia Aberta — Conceitos Básicos",
+    subtitle: "Cap. 31 Mankiw • EL, IEL, Câmbio Nominal/Real e Paridade do Poder de Compra (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Fluxos de Mercadorias (EL) e de Capitais (IEL)</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>Exportações Líquidas (EL):</strong> <code class="text-white">EL = Exportações (X) - Importações (M)</code>. X &gt; M = Superávit comercial; X &lt; M = Déficit comercial.</li>
+            <li>• <strong>Investimento Externo Líquido (IEL):</strong> Compra de ativos estrangeiros por residentes nacionais <em>menos</em> compra de ativos nacionais por estrangeiros.</li>
+            <li>• <strong>Sinal do IEL:</strong> <code class="text-emerald-400">IEL &gt; 0</code> = Saída líquida de capitais; <code class="text-amber-400">IEL &lt; 0</code> = Entrada líquida de capitais.</li>
+            <li>• <strong>Tipos de IEL:</strong> <em>Investimento Externo Direto</em> (controle ativo / abrir filial física no exterior) vs. <em>Investimento em Carteira</em> (comprar ações ou títulos estrangeiros).</li>
+            <li>• <strong>Identidade Contábil:</strong> <code class="text-blue-400 font-bold">EL = IEL</code> e <code class="text-blue-400 font-bold">S = I + IEL</code>.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Taxa de Câmbio Nominal, Real e PPC</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>Taxa de Câmbio Nominal (e):</strong> Preço relativo das moedas de dois países.</li>
+            <li>• <strong>Taxa de Câmbio Real (E):</strong> Preço relativo dos bens e serviços de dois países. Na fórmula da Aula 4 (com <em>e</em> em R$/USD): <code class="text-emerald-400 font-bold">E = (e × P*) / P</code>.</li>
+            <li>• <strong>Apreciação Real:</strong> Bens brasileiros ficam relativamente <strong>mais caros</strong> frente aos estrangeiros (reduz exportações e estimula importações).</li>
+            <li>• <strong>Paridade do Poder de Compra (PPC):</strong> Baseada na <em>Lei do Preço Único</em> (arbitragem). Diz que uma unidade de moeda deve comprar a mesma quantidade de bens em qualquer país: <code class="text-purple-400 font-bold">e = P* / P</code>.</li>
+            <li>• <strong>Limitações da PPC:</strong> (1) Bens e serviços não comercializáveis (ex: corte de cabelo) e (2) Bens não são substitutos perfeitos entre países.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Exportações líquidas (EL) são definidas como:", o:["A) exportações menos importações.","B) importações menos exportações.","C) exportações mais importações.","D) ativos externos menos internos.","E) PIB menos consumo."], c:0, e:"EL = X - M (valor das exportações menos valor das importações)."},
+      {q:"2. Quando as importações excedem as exportações, o país apresenta:", o:["A) saída de capitais necessariamente zero.","B) apreciação cambial necessariamente.","C) déficit comercial.","D) superávit comercial.","E) equilíbrio comercial."], c:2, e:"Déficit comercial ocorre quando M > X (EL < 0)."},
+      {q:"3. O investimento externo líquido (IEL) é:", o:["A) importações menos exportações.","B) compra de ativos estrangeiros por residentes nacionais menos compra de ativos internos por estrangeiros.","C) exportações menos importações.","D) apenas investimento direto estrangeiro.","E) apenas compra de títulos estrangeiros."], c:1, e:"É a definição exata do fluxo líquido de capitais externos (IEL)."},
+      {q:"4. Se IEL > 0, o material denomina a situação de:", o:["A) apreciação obrigatória.","B) saída de capitais.","C) entrada de capitais.","D) equilíbrio comercial.","E) déficit público."], c:1, e:"IEL positivo significa que residentes compram mais ativos lá fora do que estrangeiros compram aqui (saída líquida de capitais)."},
+      {q:"5. A taxa de câmbio nominal é:", o:["A) a diferença entre exportações e importações.","B) a diferença entre juros domésticos e externos.","C) o nível geral de preços.","D) o preço relativo das moedas de dois países.","E) o preço relativo dos bens de dois países."], c:3, e:"Câmbio nominal mede a taxa de troca entre duas moedas."},
+      {q:"6. A taxa de câmbio real é:", o:["A) o fluxo de capitais.","B) o preço relativo dos bens e serviços de dois países.","C) apenas o preço do dólar em reais.","D) a quantidade de reservas internacionais.","E) exportações líquidas."], c:1, e:"Câmbio real mede a taxa à qual bens e serviços de um país são trocados pelos de outro."},
+      {q:"7. Um país exporta R$ 500 milhões e importa R$ 650 milhões. Suas exportações líquidas são:", o:["A) R$ 500 milhões.","B) R$ 650 milhões.","C) R$ 1.150 milhões.","D) -R$ 150 milhões.","E) R$ 150 milhões."], c:3, e:"EL = 500 - 650 = -R$ 150 milhões."},
+      {q:"8. Residentes brasileiros compram R$ 300 milhões em ativos estrangeiros e estrangeiros compram R$ 220 milhões em ativos brasileiros. O IEL é:", o:["A) R$ 300 milhões.","B) R$ 520 milhões.","C) R$ 80 milhões.","D) -R$ 80 milhões.","E) R$ 220 milhões."], c:2, e:"IEL = 300 - 220 = R$ 80 milhões."},
+      {q:"9. Qual exemplo corresponde a investimento externo direto conforme a aula?", o:["A) Uma família compra título de empresa estrangeira.","B) Um estrangeiro compra produto brasileiro.","C) Um brasileiro compra moeda para turismo.","D) Uma empresa brasileira importa equipamento.","E) Uma empresa brasileira abre uma operação no Uruguai."], c:4, e:"Investimento direto envolve propriedade e gestão ativa de operação física no exterior."},
+      {q:"10. Qual exemplo corresponde a investimento externo em carteira?", o:["A) Um residente compra ações ou títulos de empresa estrangeira.","B) Uma empresa abre fábrica própria no exterior.","C) Uma família compra produto importado.","D) O governo compra bens nacionais.","E) Uma empresa exporta serviços."], c:0, e:"Investimento em carteira (portfólio) é a compra de ativos financeiros (ações/títulos) sem gestão direta."},
+      {q:"11. Com e = 5 R$/USD, um bem custa USD 3 nos EUA e R$ 30 no Brasil. A taxa de câmbio real, pela fórmula da aula, é:", o:["A) 15.","B) 0,5.","C) 2.","D) 5.","E) 6."], c:1, e:"E = (e × P*) / P = (5 × 3) / 30 = 15 / 30 = 0,5."},
+      {q:"12. Se a taxa de câmbio real do Brasil se aprecia, o material indica que:", o:["A) exportações e importações ficam iguais por definição.","B) bens brasileiros ficam mais caros em relação aos estrangeiros.","C) bens brasileiros ficam necessariamente mais baratos.","D) o nível de preços brasileiro cai a zero.","E) IEL torna-se zero."], c:1, e:"A apreciação real torna os produtos nacionais relativamente mais caros frente aos externos."},
+      {q:"13. Segundo a lei do preço único, se um bem idêntico é mais barato em uma localidade e pode ser transportado sem custo, a arbitragem tende a:", o:["A) eliminar o comércio.","B) reduzir o preço no local barato e elevar no caro.","C) manter os preços sem alteração.","D) comprá-lo onde está barato e vendê-lo onde está caro, aproximando os preços.","E) aumentar a diferença de preços."], c:3, e:"A arbitragem aumenta a demanda onde está barato e a oferta onde está caro até igualar os preços."},
+      {q:"14. A paridade do poder de compra (PPC) afirma que:", o:["A) EL deve ser sempre zero.","B) IEL deve ser sempre negativo.","C) taxas nominais não mudam.","D) uma unidade de moeda deveria comprar a mesma quantidade de bens em todos os países.","E) todo país deve ter a mesma inflação."], c:3, e:"Pela PPC, o poder aquisitivo de uma moeda deve ser igual em diferentes países."},
+      {q:"15. Pela PPC apresentada, se P* = 120 e P = 100, a taxa de câmbio nominal e = P*/P é:", o:["A) 1,2.","B) 0,83.","C) 1,0.","D) 20.","E) 120."], c:0, e:"e = P* / P = 120 / 100 = 1,2."},
+      {q:"16. Se a inflação no exterior é maior que no Brasil, mantendo a lógica da PPC do material, P* cresce mais rápido que P. Assim, e = P*/P tende a:", o:["A) tornar-se zero.","B) ser igual a EL.","C) aumentar.","D) diminuir.","E) permanecer necessariamente constante."], c:2, e:"Com o numerador P* crescendo mais rápido que o denominador P, a razão e = P*/P aumenta."},
+      {q:"17. Por que a PPC pode não se verificar exatamente para serviços como corte de cabelo?", o:["A) Porque não entram em nenhuma cesta de preços.","B) Porque sempre têm preço igual mundialmente.","C) Porque são ativos financeiros.","D) Porque são bens/serviços não facilmente comercializáveis e não sujeitos à arbitragem internacional.","E) Porque não possuem preço."], c:3, e:"Serviços locais (non-tradables) não podem ser exportados/arbitrados sem custo."},
+      {q:"18. Mesmo para bens comercializáveis, preços podem não se igualar perfeitamente entre países porque:", o:["A) a arbitragem é definida como ilegal.","B) taxas de câmbio reais não existem.","C) exportações líquidas são sempre positivas.","D) IEL é sempre igual a zero.","E) bens nacionais e estrangeiros podem não ser substitutos perfeitos e as preferências diferem."], c:4, e:"Diferenças de qualidade e preferência geram curvas de demanda distintas e preços relativos diferentes."},
+      {q:"19. Se X = 400 e M = 250, e a identidade apresentada na aula implica EL = IEL, qual IEL é compatível?", o:["A) -150.","B) 250.","C) 400.","D) 650.","E) 150."], c:4, e:"EL = 400 - 250 = 150. Como EL = IEL, temos IEL = 150."},
+      {q:"20. Um país registra IEL = -R$ 200 milhões. Qual interpretação é consistente com a definição da aula?", o:["A) Há entrada líquida de capitais: estrangeiros compram mais ativos domésticos do que residentes compram ativos externos.","B) Há saída líquida de R$ 200 milhões.","C) Exportações necessariamente excedem importações em R$ 200 milhões.","D) Nenhum estrangeiro compra ativos domésticos.","E) A taxa de câmbio real necessariamente é 200."], c:0, e:"IEL negativo caracteriza entrada líquida de capitais estrangeiros no país."}
+    ]
+  },
+  {
+    id: "Aula 5",
+    title: "Aula 5: Teoria Macroeconômica da Economia Aberta",
+    subtitle: "Cap. 32 Mankiw • Fundos Emprestáveis + Câmbio, Déficit, Tarifas e Fuga de Capitais (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. A Conexão entre os Dois Mercados</h3>
+          <div class="grid md:grid-cols-2 gap-3 text-xs">
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-blue-400">Mercado de Fundos Emprestáveis (Determina <em>r</em>)</strong>
+              <p class="mt-1">• <strong>Oferta = S</strong> (inclinação positiva em <em>r</em>).</p>
+              <p>• <strong>Demanda = I + IEL</strong> (inclinação negativa em <em>r</em>: juros internos maiores reduzem tanto I quanto a saída de capitais IEL).</p>
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-emerald-400">Mercado de Câmbio (Determina <em>E</em>)</strong>
+              <p class="mt-1">• <strong>Oferta de Reais = IEL</strong> (<strong>Vertical!</strong> Pois S, I e IEL dependem de <em>r</em>, não de <em>E</em>).</p>
+              <p>• <strong>Demanda por Reais = EL</strong> (inclinação negativa em <em>E</em>: quando <em>E</em> sobe/aprecia, produtos BR encarecem e EL cai).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Efeitos das Políticas e Choques</h3>
+          <ul class="text-xs space-y-2">
+            <li>• <strong>Déficit Orçamentário (↓ S):</strong> Oferta de fundos vai à esquerda → <strong>r sobe</strong> → <strong>I cai e IEL cai</strong> → menor IEL desloca oferta de reais à esquerda no câmbio → <strong>E sobe (aprecia)</strong> → <strong>EL cai</strong> (déficit comercial).</li>
+            <li>• <strong>Incentivo Fiscal ao Investimento (↑ I):</strong> Demanda de fundos vai à direita → <strong>r sobe</strong> e <strong>I sobe</strong> → mas <em>r</em> maior faz <strong>IEL cair</strong> → <strong>E aprecia</strong> e <strong>EL cai</strong>.</li>
+            <li>• <strong>Política Comercial:</strong> <em>Tarifa</em> = imposto sobre importados; <em>Quota</em> = limite quantitativo importado.</li>
+            <li>• <strong>Fuga de Capitais (ex: México 1994):</strong> Queda abrupta na demanda por ativos do país → curva IEL desloca para a direita (para cada <em>r</em>, há maior saída de capital) → demanda de fundos (I + IEL) vai à direita → <strong>r sobe e IEL sobe simultaneamente</strong> → maior oferta de moeda local no câmbio → <strong>moeda deprecia (E cai)</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. No modelo da aula, a poupança nacional financia quais aplicações?", o:["A) Somente o consumo das famílias.","B) Somente os gastos públicos.","C) Investimento doméstico e investimento externo líquido.","D) Exportações brutas e importações brutas.","E) Somente a compra de ativos estrangeiros."], c:2, e:"Pela identidade S = I + IEL, a poupança financia o investimento interno (I) e o investimento externo líquido (IEL)."},
+      {q:"2. Uma economia apresenta S = 500 e I = 380, em bilhões de reais. Qual é seu investimento externo líquido?", o:["A) -120 bilhões.","B) 120 bilhões.","C) 380 bilhões.","D) 500 bilhões.","E) 880 bilhões."], c:1, e:"IEL = S - I = 500 - 380 = 120 bilhões."},
+      {q:"3. Mantidas as demais condições, um aumento da taxa de juros real tende a:", o:["A) Reduzir a poupança e aumentar o investimento doméstico.","B) Aumentar a poupança e o investimento doméstico.","C) Reduzir a poupança e o investimento doméstico.","D) Aumentar a poupança e reduzir o investimento doméstico.","E) Manter constantes poupança e investimento doméstico."], c:3, e:"S responde positivamente a r, enquanto I responde negativamente a r."},
+      {q:"4. Se o retorno real dos ativos brasileiros cair em relação ao dos ativos estrangeiros, espera-se:", o:["A) Maior aquisição de ativos estrangeiros por brasileiros e aumento de IEL.","B) Maior aquisição de ativos brasileiros por estrangeiros e queda de IEL.","C) Menor aquisição de ativos estrangeiros por brasileiros e aumento de IEL.","D) Queda de IEL sem alteração das decisões de carteira.","E) Aumento de IEL porque os ativos brasileiros ficaram relativamente mais atraentes."], c:0, e:"Menor r doméstico torna ativos externos mais atraentes, aumentando a saída de capital (IEL sobe)."},
+      {q:"5. Por que a demanda por fundos emprestáveis é negativamente inclinada em relação à taxa de juros real?", o:["A) Porque a poupança cai quando os juros aumentam.","B) Porque a taxa de câmbio determina diretamente toda a poupança.","C) Porque os gastos públicos são sempre nulos.","D) Porque IEL aumenta quando os juros aumentam.","E) Porque I e IEL diminuem quando os juros aumentam."], c:4, e:"A demanda por fundos é I + IEL, e ambos têm relação negativa com a taxa de juros real r."},
+      {q:"6. No mercado de câmbio do modelo, qual é a correspondência correta?", o:["A) EL é oferta de reais e IEL é demanda de reais.","B) EL é demanda de reais e IEL é oferta de reais.","C) I é oferta de reais e S é demanda de reais.","D) S é oferta de reais e EL é demanda de títulos.","E) IEL é demanda de reais e I é oferta de moeda estrangeira."], c:1, e:"Estrangeiros demandam reais para comprar exportações líquidas (D = EL); residentes ofertam reais para comprar ativos externos (Oferta = IEL)."},
+      {q:"7. Se IEL = 70 bilhões, qual valor das exportações líquidas é compatível com o equilíbrio apresentado?", o:["A) -70 bilhões.","B) Zero, necessariamente.","C) 35 bilhões.","D) 70 bilhões.","E) 140 bilhões."], c:3, e:"No equilíbrio da economia aberta, vale a identidade IEL = EL = 70 bilhões."},
+      {q:"8. Segundo a convenção dos slides da Aula 5, um aumento de E representa:", o:["A) Apreciação real da moeda brasileira.","B) Depreciação real da moeda brasileira.","C) Queda obrigatória da taxa de juros real.","D) Aumento obrigatório da poupança nacional.","E) Queda do preço relativo dos bens brasileiros frente aos estrangeiros."], c:0, e:"Na Aula 5, E mede bens estrangeiros por unidade de bens brasileiros; seu aumento indica apreciação real do Real."},
+      {q:"9. Por que a demanda por reais no mercado cambial tem inclinação negativa em relação a E?", o:["A) A apreciação eleva automaticamente a poupança nacional.","B) A apreciação torna os produtos brasileiros mais baratos para estrangeiros.","C) A apreciação encarece os produtos brasileiros para estrangeiros e reduz EL.","D) A apreciação aumenta IEL independentemente dos juros.","E) A apreciação impede a compra de ativos estrangeiros."], c:2, e:"E maior (apreciação) encarece nossos bens no exterior, reduzindo EL e a quantidade demandada de reais."},
+      {q:"10. Por que a oferta de reais é vertical no mercado cambial desse modelo?", o:["A) Porque IEL é sempre igual a zero.","B) Porque a taxa de juros nunca muda.","C) Porque o governo fixa necessariamente o câmbio.","D) Porque as exportações não dependem de E.","E) Porque mudanças de E, isoladamente, não alteram S, I ou IEL."], c:4, e:"A oferta é IEL = S - I, determinada pela taxa de juros r no mercado de fundos, não dependendo de E."},
+      {q:"11. Uma elevação da taxa de juros real doméstica, mantidas as demais condições, provoca:", o:["A) Aumento de IEL, maior oferta de reais e depreciação.","B) Queda de IEL, menor oferta de reais e apreciação.","C) Queda de IEL, maior oferta de reais e depreciação.","D) Aumento de IEL, menor oferta de reais e apreciação.","E) Apreciação sem qualquer alteração de IEL."], c:1, e:"Juros maiores tornam títulos brasileiros atraentes → IEL cai → menor oferta de reais no câmbio → E sobe (aprecia)."},
+      {q:"12. Se o déficit público aumentar e reduzir a poupança nacional, qual é o primeiro efeito no mercado de fundos emprestáveis?", o:["A) Deslocamento da oferta para a esquerda e aumento de r.","B) Deslocamento da oferta para a direita e queda de r.","C) Deslocamento da demanda para a esquerda e queda de r.","D) Deslocamento da demanda para a direita, sem mudança em r.","E) Ausência de mudança, pois a poupança pública não integra S."], c:0, e:"Menor poupança pública reduz S, deslocando a oferta de fundos para a esquerda e elevando r."},
+      {q:"13. Qual encadeamento é consistente com um aumento do déficit público que reduz S?", o:["A) r cai; I aumenta; IEL aumenta; E aumenta; EL aumenta.","B) r aumenta; I aumenta; IEL aumenta; E cai; EL cai.","C) r aumenta; I cai; IEL aumenta; E cai; EL aumenta.","D) r aumenta; I cai; IEL cai; E aumenta; EL cai.","E) r cai; I cai; IEL cai; E aumenta; EL aumenta."], c:3, e:"S cai → r sobe → I cai e IEL cai → oferta de reais cai → E aumenta (aprecia) → EL cai."},
+      {q:"14. Qual diferença central existe entre o incentivo fiscal ao investimento descrito e o aumento do déficit público?", o:["A) O incentivo reduz r, enquanto o déficit aumenta r.","B) O incentivo aumenta IEL, enquanto o déficit reduz IEL.","C) O incentivo aumenta I, enquanto o déficit que reduz S tende a diminuir I.","D) O incentivo deprecia E, enquanto o déficit aprecia E.","E) Somente o déficit reduz EL."], c:2, e:"Ambos aumentam r, reduzem IEL, apreciam E e reduzem EL; mas o incentivo aumenta I e o déficit reduz I."},
+      {q:"15. Qual alternativa distingue corretamente tarifa e quota de importação?", o:["A) Tarifa limita quantidades e quota tributa exportações.","B) Ambas são exclusivamente políticas de compra de ativos externos.","C) Tarifa e quota são necessariamente subsídios às importações.","D) Tarifa fixa a taxa de juros e quota fixa o câmbio.","E) Tarifa é imposto sobre importação; quota limita a quantidade importada."], c:4, e:"Definição direta de política comercial apresentada nos slides."},
+      {q:"16. Quais objetivos aparecem como justificativas comuns para restringir importações?", o:["A) Eliminar a poupança pública e reduzir o investimento.","B) Proteger empregos de uma indústria nacional e reduzir o déficit comercial.","C) Aumentar necessariamente as importações e reduzir as exportações.","D) Reduzir o estoque de capital e elevar o desemprego.","E) Impedir qualquer transação financeira internacional."], c:1, e:"São os dois argumentos clássicos citados nos slides para políticas protecionistas."},
+      {q:"17. No caso apresentado de aquisição de ativos americanos pela China, qual efeito nos Estados Unidos é destacado?", o:["A) Valorização do dólar e aumento das importações americanas da China.","B) Desvalorização do dólar e queda das importações americanas da China.","C) Valorização do dólar e eliminação do déficit comercial americano.","D) Redução das importações sem mudança cambial.","E) Aumento obrigatório da produção americana em todas as indústrias."], c:0, e:"A compra de ativos dos EUA pela China valorizou o dólar, barateou importações chinesas e ampliou o déficit comercial dos EUA."},
+      {q:"18. Qual situação caracteriza fuga de capital, conforme a aula?", o:["A) Aumento gradual das exportações por ganhos de produtividade.","B) Maior poupança das famílias sem mudança de carteira.","C) Crescimento da demanda por ativos domésticos após maior estabilidade.","D) Redução grande e súbita da demanda por ativos localizados em um país.","E) Aumento temporário da demanda por bens de consumo domésticos."], c:3, e:"Fuga de capital é a queda abrupta de demanda pelos ativos de um país (como no México em 1994)."},
+      {q:"19. Por que a fuga de capital pode elevar simultaneamente r e IEL, embora IEL dependa negativamente de r?", o:["A) Porque a relação negativa deixa de existir em qualquer situação.","B) Porque a oferta de poupança necessariamente se torna horizontal.","C) Porque o choque desloca a relação de IEL: para cada r há maior saída líquida, elevando a demanda de fundos.","D) Porque a taxa de câmbio fixa r por definição.","E) Porque a fuga de capital reduz a demanda de fundos e eleva r."], c:2, e:"Trata-se de um deslocamento da curva IEL para a direita (e não movimento ao longo dela), puxando a demanda de fundos para a direita."},
+      {q:"20. Após a fuga de capital do México, qual movimento cambial o modelo prevê?", o:["A) Menor oferta de pesos e apreciação real.","B) Maior demanda por pesos e apreciação real.","C) Menor oferta de pesos e ausência de ajuste cambial.","D) Queda de IEL e depreciação real.","E) Maior oferta de pesos e depreciação real."], c:4, e:"O aumento de IEL desloca a oferta de pesos para a direita no mercado cambial, reduzindo E (depreciação real)."}
+    ]
+  },
+  {
+    id: "Aula 6.1",
+    title: "Aula 6.1: Oferta Agregada e Demanda Agregada (Parte 1)",
+    subtitle: "Cap. 33 Mankiw • Flutuações, Efeitos Riqueza/Juros/Câmbio na DA e OAlp (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Flutuações e Inclinação da Demanda Agregada (DA)</h3>
+          <p class="text-xs mb-3"><strong>3 Fatos sobre Flutuações:</strong> (1) Irregulares e imprevisíveis; (2) Variáveis flutuam juntas; (3) Quando o produto cai, o desemprego aumenta. No gráfico OA-DA: <strong>Eixo Horizontal = PIB Real (Y)</strong> e <strong>Eixo Vertical = Nível de Preços (P)</strong>.</p>
+          <div class="grid md:grid-cols-3 gap-3 text-xs">
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-blue-400">Efeito Riqueza (P → C):</strong> P sobe → poder de compra da moeda cai → menor riqueza real → <strong>C cai</strong>.
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-emerald-400">Efeito Juros (P → I):</strong> P sobe → maior demanda por dinheiro → venda de títulos eleva juros → <strong>I cai</strong>.
+            </div>
+            <div class="bg-gray-950 p-3 rounded border border-gray-800">
+              <strong class="text-purple-400">Efeito Câmbio (P → EL):</strong> Juros sobem → atrai capital externo → moeda aprecia → <strong>EL cai</strong>.
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Deslocamentos da DA e Oferta Agregada de Longo Prazo (OAlp)</h3>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>Deslocam a DA (a um dado P):</strong> Mudanças autônomas em C (bolsa de valores, impostos), I (otimismo/pessimismo, política monetária), G (compras públicas) e EL (renda externa, câmbio).</li>
+            <li>• <strong>OAlp é Vertical em Y_N (Produto Potencial / Pleno Emprego):</strong> Quando o desemprego está na sua <em>taxa natural</em> (não é zero!). Depende apenas de fatores reais: Trabalho (L), Capital (K), Capital Humano (H), Recursos Naturais e Tecnologia.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Qual combinação descreve as flutuações econômicas apresentadas?", o:["A) Ciclos regulares e redução do desemprego nas recessões.","B) Produto constante e flutuações apenas nos preços.","C) Flutuações irregulares, com queda do produto e aumento do desemprego nas recessões.","D) Crescimento contínuo de todas as variáveis em recessões.","E) Variações previsíveis que não afetam o investimento."], c:2, e:"Os 3 fatos: flutuações irregulares/imprevisíveis, co-movimento das variáveis e relação inversa entre produto e desemprego."},
+      {q:"2. No diagrama OA-DA, quais grandezas estão nos eixos horizontal e vertical, respectivamente?", o:["A) PIB real e nível de preços.","B) Taxa de juros e PIB nominal.","C) Nível de preços e PIB real.","D) Desemprego e taxa de câmbio.","E) Oferta de moeda e taxa de juros."], c:0, e:"Eixo X (horizontal) = PIB real (Y); Eixo Y (vertical) = Nível geral de preços (P)."},
+      {q:"3. Se o nível de preços subir e o valor nominal do dinheiro das famílias permanecer constante, o efeito riqueza indica:", o:["A) Maior poder de compra e maior consumo.","B) Menor poder de compra e maior consumo.","C) Maior riqueza real e menor consumo.","D) Menor riqueza real e menor consumo.","E) Ausência de alteração da riqueza real."], c:3, e:"Preços maiores reduzem o poder aquisitivo dos saldos monetários (menor riqueza real), reduzindo o consumo C."},
+      {q:"4. Qual sequência explica o efeito taxa de juros de um aumento de P?", o:["A) Menor necessidade de dinheiro, queda dos juros e menor I.","B) Maior necessidade de dinheiro, aumento dos juros e menor I.","C) Maior necessidade de dinheiro, queda dos juros e maior I.","D) Menor necessidade de dinheiro, aumento dos juros e maior I.","E) Aumento dos juros e aumento automático de I."], c:1, e:"P maior exige mais dinheiro para transações → famílias vendem títulos → juros sobem → investimento (I) cai."},
+      {q:"5. Pelo efeito cambial, um aumento de P pode reduzir EL porque:", o:["A) A queda dos juros atrai investidores e deprecia a moeda.","B) A apreciação barateia exportações brasileiras para estrangeiros.","C) As importações ficam mais caras aos residentes após a apreciação.","D) O aumento dos juros afasta necessariamente todo capital estrangeiro.","E) Juros maiores atraem investidores, apreciam a moeda e encarecem exportações para estrangeiros."], c:4, e:"Juros domésticos mais altos atraem capital externo, apreciando o câmbio e reduzindo as exportações líquidas (EL)."},
+      {q:"6. Qual distinção entre movimento ao longo da DA e deslocamento da DA está correta?", o:["A) Aumento de P desloca DA à direita; maior G causa movimento ao longo dela.","B) Queda de P desloca DA à esquerda; maior consumo autônomo não a altera.","C) Mudança de P causa movimento ao longo da DA; maior G desloca DA à direita.","D) Qualquer mudança de C provoca apenas movimento ao longo da DA.","E) Aumento de G desloca exclusivamente a OA de longo prazo."], c:2, e:"Mudanças no próprio eixo vertical (P) geram movimento ao longo da curva; mudanças em C, I, G ou EL para um dado P deslocam a DA."},
+      {q:"7. Se o pessimismo das empresas reduzir I e uma recessão externa reduzir as exportações brasileiras, qual é o efeito esperado sobre DA?", o:["A) Deslocamento para a esquerda por ambos os canais.","B) Deslocamento para a direita por ambos os canais.","C) Ausência de mudança, pois apenas G desloca DA.","D) Deslocamento para a direita pela queda de I e para a esquerda pela queda das exportações.","E) Deslocamento da OA de longo prazo, sem alteração de DA."], c:0, e:"Tanto a queda de I quanto a queda de EL reduzem a demanda agregada a qualquer nível de preços (DA vai para a esquerda)."},
+      {q:"8. Por que a OA de longo prazo é vertical no modelo?", o:["A) Porque o produto potencial é sempre zero.","B) Porque todos os preços permanecem fixos.","C) Porque a demanda agregada não existe no longo prazo.","D) Porque o produto potencial depende de fatores reais, e não do nível de preços.","E) Porque a taxa natural de desemprego é necessariamente zero."], c:3, e:"Pela dicotomia clássica, no longo prazo Y_N depende de capital, trabalho, recursos naturais e tecnologia, não de P."},
+      {q:"9. Qual evento tende a deslocar a OA de longo prazo para a direita?", o:["A) Destruição de fábricas por uma tragédia.","B) Avanço tecnológico que eleva a produtividade.","C) Aumento isolado do nível de preços.","D) Redução do estoque de capital humano.","E) Saída de trabalhadores, sem compensação por outros fatores."], c:1, e:"Progresso tecnológico amplia a capacidade produtiva potencial (Y_N), deslocando a OAlp para a direita."},
+      {q:"10. Por que um aumento da DA pode elevar Y no curto prazo, mas não alterar YN no longo prazo, mantidos os fatores reais?", o:["A) Porque OA é vertical no curto prazo e horizontal no longo.","B) Porque P nunca responde à demanda agregada.","C) Porque o estoque de capital aumenta automaticamente com qualquer mudança de P.","D) Porque o desemprego natural desaparece no longo prazo.","E) Porque OAcp é inclinada, enquanto OAlp é vertical no produto potencial."], c:4, e:"No curto prazo a OAcp positivamente inclinada permite expansão de Y; no longo prazo a OAlp é vertical em Y_N."},
+      {q:"11. Como a aula distingue a evolução do PIB real no curto e no longo prazo?", o:["A) No curto prazo ele é constante; no longo prazo ele apenas cai.","B) No curto prazo ele flutua em torno de uma tendência de crescimento de longo prazo.","C) No curto prazo ele cresce necessariamente mais que no longo prazo.","D) No longo prazo não existe tendência, apenas ciclos regulares.","E) O PIB real só pode variar quando o nível de preços aumenta."], c:1, e:"No longo prazo o PIB real cresce segundo uma tendência; no curto prazo ocorrem flutuações (ciclos) ao redor dela."},
+      {q:"12. Qual descrição corresponde à curva de demanda agregada?", o:["A) Quantidade de moeda ofertada pelo banco central para cada taxa de juros.","B) Produção de uma única empresa para cada preço de seu produto.","C) Quantidade de ativos externos comprados para cada taxa de câmbio.","D) Quantidade total de bens e serviços demandados na economia para cada nível de preços.","E) Quantidade de trabalho ofertada para cada salário nominal."], c:3, e:"Definição direta da curva DA."},
+      {q:"13. Mantido G fixo, qual combinação ajuda a explicar a inclinação negativa da DA quando P aumenta?", o:["A) C, I e EL tendem a cair.","B) C, I e EL tendem a subir.","C) C sobe, I sobe e EL cai.","D) C cai, I sobe e EL sobe.","E) C, I e EL necessariamente permanecem constantes."], c:0, e:"Pelos efeitos riqueza, juros e câmbio, um aumento de P reduz C, I e EL."},
+      {q:"14. Uma valorização das ações aumenta a riqueza das famílias, estimulando o consumo a cada nível de preços. Como representar esse evento?", o:["A) Movimento para cima ao longo de uma DA inalterada.","B) Deslocamento da OA de longo prazo à esquerda.","C) Deslocamento da DA à esquerda.","D) Movimento para baixo ao longo da OA de longo prazo.","E) Deslocamento da DA à direita."], c:4, e:"Maior consumo autônomo a um dado P desloca a curva DA para a direita."},
+      {q:"15. Se uma redução de impostos elevar o consumo das famílias, mantidos os demais componentes da demanda, o efeito direto esperado é:", o:["A) DA à esquerda e menor quantidade demandada a cada P.","B) OA de longo prazo à direita, necessariamente.","C) DA à direita e maior quantidade demandada a cada P.","D) Ausência de mudança em DA, pois impostos não afetam C.","E) Somente movimento ao longo de DA causado por P."], c:2, e:"Cortes de impostos aumentam a renda disponível e o consumo a cada nível de preços, deslocando DA à direita."},
+      {q:"16. Um governo estadual aumenta os gastos com escolas e estradas. Mantidas as demais condições, como esse gasto entra no modelo de DA?", o:["A) Como G, deslocando DA para a direita.","B) Como EL, deslocando DA para a esquerda.","C) Como queda de I, deslocando DA para a esquerda.","D) Como variação de P, sem deslocamento de DA.","E) Como IEL, tornando DA vertical."], c:0, e:"Compras de governos estaduais e municipais também entram em G e deslocam a DA para a direita."},
+      {q:"17. Qual combinação descreve corretamente as curvas de oferta agregada?", o:["A) OAcp vertical e OAlp negativamente inclinada.","B) OAcp horizontal necessariamente e OAlp horizontal.","C) OAcp negativamente inclinada e OAlp vertical.","D) OAcp positivamente inclinada e OAlp vertical em YN.","E) OAcp e OAlp sempre negativamente inclinadas."], c:3, e:"A OA de curto prazo tem inclinação positiva e a OA de longo prazo é vertical em Y_N."},
+      {q:"18. O produto de pleno emprego, conforme a definição dos slides, corresponde ao produto obtido quando:", o:["A) A taxa de desemprego é necessariamente zero.","B) O desemprego está em sua taxa natural.","C) Todos os preços são iguais a zero.","D) As exportações líquidas são necessariamente positivas.","E) O governo elimina todo investimento privado."], c:1, e:"Pleno emprego (Y_N) ocorre quando o desemprego está na sua taxa natural (friccional + estrutural)."},
+      {q:"19. Uma tragédia destrói fábricas e equipamentos, sem compensação por outros fatores produtivos. Qual efeito é consistente com a aula?", o:["A) OAlp à direita porque o nível de preços tende a aumentar.","B) DA torna-se vertical porque desaparece o investimento.","C) OAlp permanece inalterada porque capital não determina YN.","D) Apenas movimento ao longo de OAlp, com aumento de YN.","E) OAlp à esquerda porque a redução do estoque de capital diminui YN."], c:4, e:"A destruição de capital físico reduz o produto potencial Y_N, deslocando a OAlp para a esquerda."},
+      {q:"20. Suponha que OAlp e DA se desloquem à direita ao longo do tempo. O diagrama da aula ilustra crescimento do produto e aumento dos preços. Qual afirmação avalia corretamente esse resultado?", o:["A) Os preços necessariamente aumentam em qualquer combinação desses deslocamentos.","B) O produto potencial cai sempre que OAlp se desloca à direita.","C) OAlp à direita eleva o produto potencial; a direção da mudança de P depende da intensidade relativa dos deslocamentos, sendo aumento de P o caso ilustrado.","D) DA à direita implica necessariamente queda do nível de preços.","E) O deslocamento de OAlp à direita impede qualquer aumento do produto."], c:2, e:"O avanço tecnológico desloca OAlp à direita (cresce Y_N); como a DA costuma crescer ainda mais rápido (expansão monetária/consumo), gera-se inflação contínua."}
+    ]
+  },
+  {
+    id: "Aula 6.2",
+    title: "Aula 6.2: Oferta Agregada e Demanda Agregada (Parte 2)",
+    subtitle: "Cap. 33 Mankiw • As 3 Teorias da OAcp, Equação de Oferta e Ajustes a Choques (20 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. As 3 Teorias da OAcp e a Equação Fundamental</h3>
+          <p class="text-xs mb-2">Todas as 3 teorias têm em comum uma <strong>imperfeição de mercado no curto prazo</strong> que faz Y desviar de Y_N quando o preço atual (P) difere do preço esperado (P_E):</p>
+          <div class="p-2.5 bg-gray-950 border border-gray-800 rounded text-center font-mono text-emerald-400 font-bold mb-3">
+            Y = Y_N + a × (P - P_E) &nbsp;&nbsp;[com a &gt; 0]
+          </div>
+          <ul class="text-xs space-y-1.5">
+            <li>1. <strong>Rigidez Salarial:</strong> Salários nominais são fixados antes com base em P_E. Se P &gt; P_E, a receita da empresa sobe sem igual aumento do custo do trabalho → contratar e produzir fica mais rentável.</li>
+            <li>2. <strong>Preços Rígidos (Custos de Menu):</strong> Algumas firmas demoram a aumentar preços após expansão monetária; seus preços ficam relativamente baixos, atraindo clientes e aumentando vendas/produção.</li>
+            <li>3. <strong>Percepções Equivocadas:</strong> Empresas confundem alta geral de preços (P) com aumento do preço relativo do seu próprio produto e produzem mais.</li>
+            <li>• <strong>Deslocamento da OAcp por P_E:</strong> Se P_E aumenta (mantidos Y_N e P), (P - P_E) diminui → <strong>OAcp desloca-se para a esquerda</strong> e Y cai. No longo prazo, P_E = P e Y = Y_N.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">2. Os 4 Passos das Flutuações e Episódios Históricos</h3>
+          <p class="text-xs mb-2"><strong>Ordem de análise:</strong> (1) Identificar a curva afetada; (2) Sentido do deslocamento; (3) Equilíbrio de curto prazo; (4) Ajuste para o longo prazo.</p>
+          <ul class="text-xs space-y-1.5">
+            <li>• <strong>Choque Negativo de Demanda (Crash de 1929 / Crise Imobiliária de 2008):</strong> Queda de ações ou imóveis (onde hipotecas superaram o valor das casas e execuções aumentaram a oferta de imóveis) reduz C e I → DA vai à esquerda → Y e P caem no CP. Sem intervenção, P_E cai e OAcp vai à direita no LP. Keynes defendeu estimular a DA para evitar o longo sofrimento do desemprego.</li>
+            <li>• <strong>Choque Positivo de Demanda (Segunda Guerra Mundial):</strong> Forte aumento de G deslocou DA para a direita → subiram Y e P, e o desemprego despencou.</li>
+            <li>• <strong>Choque Adverso de Oferta (Petróleo):</strong> Custos sobem → OAcp vai à esquerda → P sobe e Y cai (Estagflação). Se o governo expandir DA para restaurar Y_N (acomodação), Y volta a Y_N mas <strong>P fica permanentemente mais alto</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Com salários nominais fixados antecipadamente, o que ocorre quando P supera PE?", o:["A) O custo nominal do trabalho aumenta automaticamente na mesma proporção.","B) A produção fica menos rentável e o emprego cai necessariamente.","C) A receita cresce sem igual reajuste do custo do trabalho, favorecendo produção e emprego.","D) O produto permanece obrigatoriamente em YN no curto prazo.","E) A OA de curto prazo torna-se vertical imediatamente."], c:2, e:"Na teoria da rigidez salarial, P > PE eleva a receita por unidade vendida enquanto o salário nominal está travado, aumentando a rentabilidade e o produto."},
+      {q:"2. Na teoria dos preços rígidos, por que algumas empresas aumentam a produção após uma expansão monetária inesperada?", o:["A) Seus preços demoram a subir, ficam relativamente baixos e atraem maior demanda.","B) Seus preços sobem mais que todos os demais e a demanda aumenta por isso.","C) Os custos de menu eliminam qualquer venda adicional.","D) Todos os preços se ajustam imediatamente e YN aumenta.","E) A expansão monetária reduz obrigatoriamente a demanda pelos produtos."], c:0, e:"Devido aos custos de menu, empresas que demoram a reajustar seus preços ficam mais baratas relativamente, vendendo e produzindo mais."},
+      {q:"3. Qual mecanismo descreve a teoria das percepções equivocadas?", o:["A) Os trabalhadores confundem salário nominal com taxa de câmbio fixa.","B) As empresas deixam de observar o preço de seu próprio produto.","C) A poupança nacional torna-se independente dos juros.","D) A empresa interpreta uma alta geral de preços como alta do preço relativo de seu produto e aumenta a produção.","E) As empresas conhecem perfeitamente todos os preços e reduzem a produção quando P aumenta."], c:3, e:"O produtor nota a alta do seu próprio preço antes de perceber a inflação geral, achando que seu preço relativo subiu."},
+      {q:"4. Considere Y = YN + a(P - PE), com YN = 1.000, a = 4, P = 110 e PE = 100. Qual é Y?", o:["A) 960.","B) 1.040.","C) 1.100.","D) 1.400.","E) 1.000."], c:1, e:"Y = 1.000 + 4 × (110 - 100) = 1.000 + 40 = 1.040."},
+      {q:"5. Mantidos YN e P, um aumento de PE tem qual efeito na OAcp e em Y, segundo a equação da aula?", o:["A) Desloca OAcp à direita e aumenta Y.","B) Desloca OAlp à direita e mantém Y constante.","C) Não altera OAcp porque só P importa.","D) Desloca OAcp à direita e reduz Y.","E) Desloca OAcp à esquerda e reduz Y."], c:4, e:"Maior PE reduz (P - PE), diminuindo Y para cada P e deslocando a curva OAcp para a esquerda."},
+      {q:"6. Um crash nas ações reduz C. Sem nova intervenção e com YN constante, qual sequência descreve o ajuste apresentado?", o:["A) DA vai à direita; P e Y caem; OAcp vai à esquerda.","B) DA vai à esquerda; P e Y sobem; Y permanece acima de YN.","C) DA vai à esquerda; P e Y caem; depois PE cai e OAcp vai à direita, devolvendo Y a YN.","D) OAcp vai à esquerda; P sobe e Y cai; DA permanece igual.","E) DA vai à esquerda e OAlp vai à esquerda na mesma proporção, necessariamente."], c:2, e:"Queda de C desloca DA à esquerda (Y e P caem no CP). No LP, PE se ajusta para baixo, deslocando OAcp à direita até Y voltar a YN."},
+      {q:"7. Um aumento do preço do petróleo que eleva custos de produção tende a gerar, no curto prazo:", o:["A) OAcp à esquerda, P maior e Y menor.","B) OAcp à direita, P menor e Y maior.","C) DA à direita, P maior e Y maior.","D) DA à esquerda, P menor e Y menor.","E) OAlp à direita, com queda imediata do desemprego."], c:0, e:"Choque adverso de custos desloca OAcp à esquerda, gerando estagflação (P sobe e Y cai)."},
+      {q:"8. Após um choque adverso temporário de oferta, a política aumenta DA para restaurar YN. Qual consequência aparece no modelo?", o:["A) Y volta a YN e P necessariamente retorna ao nível anterior.","B) Y cai ainda mais e P também cai.","C) A política elimina a restrição de oferta sem efeito sobre preços.","D) Y pode voltar a YN, mas P permanece mais alto.","E) OAlp desloca-se automaticamente à direita."], c:3, e:"Acomodar o choque via expansão de DA recupera o produto (YN), mas consolida um nível de preços (P) mais alto."},
+      {q:"9. Represente a queda de demanda associada à crise imobiliária e a reação expansionista descrita. Qual leitura do diagrama é coerente, mantendo as curvas de oferta fixas para comparar os efeitos imediatos?", o:["A) Crise: DA à direita; resposta: DA à esquerda.","B) Crise: DA à esquerda; resposta: DA à direita em relação à situação de crise, buscando recuperar Y.","C) Crise: apenas aumento de YN; resposta: redução de YN.","D) Crise: OAcp à direita; resposta: DA à esquerda para recuperar Y.","E) Crise e resposta: nenhuma mudança de DA, pois somente o mercado imobiliário foi afetado."], c:1, e:"A crise contrai a DA (esquerda) e o estímulo fiscal/monetário busca deslocar a DA de volta para a direita."},
+      {q:"10. Uma economia parte de YN e sofre um choque temporário de custos. Compare a ausência de intervenção com a expansão de DA para restaurar YN. Qual conclusão é correta?", o:["A) Sem intervenção, DA aumenta automaticamente; com intervenção, P cai.","B) Sem intervenção, YN necessariamente cai para sempre; com intervenção, ele aumenta.","C) As duas trajetórias produzem necessariamente o mesmo nível final de preços.","D) A expansão de DA restaura o produto apenas se também reduzir P.","E) Sem intervenção, o ajuste de salários pode devolver OAcp à posição inicial; a expansão de DA restaura YN com P mais alto."], c:4, e:"Sem intervenção, a recessão reduz salários/PE e devolve OAcp ao ponto inicial; com acomodação da DA, YN é restaurado com inflação maior."},
+      {q:"11. Qual elemento as três teorias de oferta agregada de curto prazo têm em comum?", o:["A) Produto sempre igual ao potencial.","B) Alguma imperfeição que permite desvio de Y quando P difere de PE.","C) Salários perfeitamente flexíveis em todos os momentos.","D) Ausência de expectativas sobre os preços.","E) Produto determinado exclusivamente pelo estoque de moeda."], c:1, e:"Nas três teorias, uma imperfeição de curto prazo faz Y desviar de YN quando P ≠ PE."},
+      {q:"12. Se P = PE na equação Y = YN + a(P - PE), qual resultado se obtém?", o:["A) Y é zero.","B) Y supera YN em a unidades.","C) Y é menor que YN.","D) Y é igual a YN.","E) Y depende apenas de a."], c:3, e:"Quando P = PE, o termo a(P - PE) é zero e Y = YN (equilíbrio de longo prazo)."},
+      {q:"13. Com YN = 800, a = 3, P = 90 e PE = 100, qual é o produto?", o:["A) 770.","B) 800.","C) 830.","D) 1.070.","E) 500."], c:0, e:"Y = 800 + 3 × (90 - 100) = 800 - 30 = 770."},
+      {q:"14. Qual ajuste ajuda a explicar a oferta agregada vertical no longo prazo?", o:["A) As expectativas se afastam permanentemente dos preços.","B) Os salários deixam de influenciar custos.","C) O produto potencial passa a depender exclusivamente de P.","D) A demanda agregada se torna horizontal.","E) Preços e salários se ajustam e percepções equivocadas são corrigidas."], c:4, e:"No longo prazo, salários e preços são flexíveis, percepções se corrigem e PE = P."},
+      {q:"15. Qual é a ordem dos passos propostos para analisar uma flutuação econômica?", o:["A) Definir primeiro o novo produto potencial e ignorar os preços.","B) Alterar todas as curvas e só depois identificar o choque.","C) Identificar a curva afetada, o sentido do deslocamento, o equilíbrio de curto prazo e o ajuste de longo prazo.","D) Supor que todo choque altera apenas DA e calcular a inflação.","E) Calcular o desemprego antes de identificar o mercado afetado."], c:2, e:"São exatamente os 4 passos metodológicos apresentados nos slides."},
+      {q:"16. Segundo o caso da Grande Depressão apresentado, a queda das ações contribuiu para a recessão porque:", o:["A) Aumentou consumo e investimento.","B) Reduziu consumo e investimento, enfraquecendo a demanda agregada.","C) Aumentou automaticamente o produto potencial.","D) Reduziu preços e por isso deslocou DA à direita.","E) Eliminou a rigidez salarial imediatamente."], c:1, e:"A perda de riqueza e confiança derrubou C e I, deslocando a DA para a esquerda."},
+      {q:"17. No episódio da Segunda Guerra Mundial apresentado, o forte aumento de G está associado a:", o:["A) DA à esquerda, com queda de produto e preços.","B) OAcp à esquerda, com queda do produto.","C) Ausência de efeitos sobre emprego.","D) DA à direita, com aumento do produto e dos preços e queda do desemprego.","E) OAlp à esquerda, com aumento permanente do desemprego."], c:3, e:"A expansão maciça dos gastos militares (G) deslocou a DA para a direita, elevando Y e P."},
+      {q:"18. No caso de 2008-2009, o que significa um proprietário dever mais na hipoteca do que o valor de sua casa?", o:["A) A dívida supera o valor do ativo após a queda dos preços imobiliários.","B) O imóvel foi inteiramente pago.","C) O valor da casa necessariamente aumentou.","D) O banco passou a dever ao proprietário.","E) A securitização eliminou toda possibilidade de inadimplência."], c:0, e:"Com o colapso dos preços dos imóveis, o saldo devedor da hipoteca ficou maior que o valor de mercado da residência (patrimônio líquido negativo)."},
+      {q:"19. Por que a execução de hipotecas e a venda das casas pelos bancos podem agravar a queda de preços imobiliários?", o:["A) Eliminam a oferta de casas.","B) Aumentam automaticamente a renda dos compradores.","C) Diminuem os custos de menu.","D) Impedem novos inadimplementos por definição.","E) Aumentam a oferta de casas à venda, pressionando seus preços para baixo."], c:4, e:"As retomadas e vendas forçadas de imóveis pelos bancos ampliam o excesso de oferta, derrubando ainda mais os preços."},
+      {q:"20. Qual argumento de Keynes é destacado na aula?", o:["A) Toda recessão decorre exclusivamente de falta de tecnologia.","B) A demanda não influencia o emprego no curto prazo.","C) Recessões podem decorrer de demanda insuficiente, justificando políticas que alterem DA.","D) A estabilização exige preços permanentemente fixos.","E) O ajuste de longo prazo torna irrelevantes todos os custos presentes do desemprego."], c:2, e:"Keynes destacou que a insuficiência de demanda agregada causa recessões e que o governo deve atuar sobre a DA ('no longo prazo estaremos todos mortos')."}
+    ]
+  },
+  {
+    id: "Aula 7.2",
+    title: "Aula 7.2: Debates sobre Política Macroeconômica + Artigo Empírico",
+    subtitle: "Cap. 36 Mankiw + Estudo Tesouro/IBGE • Os 6 Debates e a Ciclicidade Fiscal no Brasil (25 questões)",
+    summary: `
+      <div class="space-y-5 text-sm text-gray-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+          <h3 class="text-base font-bold text-blue-400 mb-2">1. Síntese dos 6 Debates de Política Macroeconômica</h3>
+          <ul class="text-xs space-y-2">
+            <li><strong>1. Estabilizar ativamente?</strong> <em>Sim:</em> compensa pessimismo e reduz recessões. <em>Não:</em> políticas têm defasagens (atrasos) e podem atuar tarde demais, ampliando flutuações.</li>
+            <li><strong>2. Gastos Públicos (G) vs. Corte de Impostos (T) na recessão:</strong> <em>Gastos:</em> cada R$ 1 de G entra 100% na demanda direta (enquanto parte do corte de impostos é poupada, ex: se famílias gastam 60% de R$ 100, gera só R$ 60 diretos). <em>Impostos:</em> aumenta renda disponível, incentiva trabalho/oferta e evita projetos inúteis ("pontes para lugar nenhum").</li>
+            <li><strong>3. Regra vs. Discrição Monetária:</strong> <em>Regras (crescimento constante da moeda ou reduzir crescimento monetário quando inflação supera a meta):</em> evita incompetência, <em>ciclo de negócios políticos</em> (eleições) e <em>inconsistência temporal</em>. <em>Discrição:</em> dá flexibilidade frente a choques imprevistos.</li>
+            <li><strong>4. Meta de Inflação Zero?</strong> <em>Sim:</em> custo temporário vs. benefício permanente (credibilidade reduz inflação esperada e barateia transição). <em>Não:</em> taxa de sacrifício alta (estimativa: <strong>5% do PIB de 1 ano para cada 1% de redução da inflação</strong>) e cicatrizes duradouras no capital e qualificações.</li>
+            <li><strong>5. Equilibrar o Orçamento?</strong> <em>Sim:</em> evita crowding-out e fardo intergeracional. <em>Não:</em> cortar educação prejudica capital humano; o que importa é a relação <strong>Dívida/Renda (PIB)</strong>.</li>
+            <li><strong>6. Substituir Imposto de Renda por Imposto sobre Consumo (estimular poupança)?</strong> <em>Sim:</em> maior retorno líquido incentiva poupar. <em>Não:</em> imposto sobre consumo é regressivo (prejudica mais os pobres), beneficia ricos e pode aumentar o déficit público.</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 border border-emerald-800/60 rounded-xl p-5">
+          <h3 class="text-base font-bold text-emerald-400 mb-2">2. Estudo Empírico: A Despesa Primária do Governo é Contracíclica? (Brasil, 1997–2025)</h3>
+          <ul class="text-xs space-y-2">
+            <li>• <strong>Variável correta (Ilzetzki & Végh, 2008):</strong> Deve-se testar a <strong>Despesa Primária</strong> e não o Saldo Primário, pois o saldo mistura o estabilizador automático da receita (arrecadação sobe sozinha com o PIB) com a decisão discricionária do governo.</li>
+            <li>• <strong>Fato Estilizado Internacional:</strong> Países em desenvolvimento costumam ser <strong>pró-cíclicos</strong> (Talvi & Végh explicam pela pressão política de gastar excessos de arrecadação nos booms), mas cerca de 1/3 "se graduou" graças a melhores instituições (Frankel, Végh & Vuletin, 2013).</li>
+            <li>• <strong>Literatura Brasileira com Mudança de Regime:</strong> Estudos que usam equação única (MQO) acham política "acíclica" porque os sinais se anulam no tempo. Estudos com mudança de regime (Markov-Switching, como Mendonça et al., Wichmann & Portugal, Pires) capturam a assimetria real.</li>
+            <li>• <strong>Metodologia do Estudo:</strong> O <em>K-Means</em> falhou em criar blocos cronológicos porque a despesa trimestral tem muito ruído pontual (precatórios, sazonalidade). Usou-se então a <strong>Correlação Móvel de 12 trimestres (3 anos)</strong> + <strong>Causalidade de Granger</strong>.</li>
+            <li>• <strong>Resultados:</strong> (1) Granger aponta <strong>Despesa → Hiato</strong> (fraca, p entre 0,067 e 0,099), compatível com multiplicador keynesiano, e não Hiato → Despesa (p=0,11). (2) O Brasil tem uma <strong>"graduação condicional"</strong>: é pró-cíclico em períodos normais (Lula 1-2, Dilma, início de Lula 3), quase acíclico sob FHC 2 e Temer (Teto de Gastos), mas torna-se <strong>fortemente contracíclico exatamente nas duas grandes crises agudas</strong> — <strong>Crise de 2008–09 (r ≈ -0,77)</strong> e <strong>Pandemia de 2020 (r = -0,94)</strong> — independentemente do partido no poder.</li>
+          </ul>
+        </div>
+      </div>
+    `,
+    questions: [
+      {q:"1. Qual argumento favorece a estabilização ativa?", o:["A) As flutuações desaparecem sem custo em todos os casos.","B) Políticas podem compensar quedas da demanda provocadas pelo pessimismo e reduzir recessões.","C) Todos os choques são antecipados perfeitamente.","D) A política só afeta preços, mesmo no curto prazo.","E) A política fiscal não influencia o emprego."], c:1, e:"A estabilização ativa ('inclinar-se contra o vento') usa políticas monetária e fiscal para estabilizar demanda, produto e emprego."},
+      {q:"2. Por que as defasagens geram uma objeção à estabilização ativa?", o:["A) Porque tornam as previsões exatas.","B) Porque eliminam qualquer efeito da política.","C) Porque reduzem o produto potencial por definição.","D) Porque a política pode produzir efeito quando a economia já mudou, intensificando as flutuações.","E) Porque obrigam a taxa de juros a permanecer constante."], c:3, e:"Devido aos atrasos e à imprecisão das previsões, o estímulo pode atuar quando a recessão já passou, aquecendo demais a economia."},
+      {q:"3. Considere o Gráfico 1 da lista (Estímulo com defasagem), onde a recessão já terminou no período 4 quando o estímulo começa a atuar. Qual preocupação ele ilustra?", o:["A) Uma resposta tardia pode elevar a atividade acima de sua tendência e ampliar a oscilação.","B) Qualquer estímulo elimina os ciclos imediatamente.","C) As defasagens não influenciam o resultado.","D) A trajetória com política é sempre preferível por definição.","E) O gráfico prova que todas as políticas ativas fracassam."], c:0, e:"Mostra o risco de um estímulo tardio empurrar o produto acima da tendência e agravar a volatilidade."},
+      {q:"4. Qual argumento favorece combater recessões com aumento de compras públicas, em vez de corte de impostos?", o:["A) Toda redução de impostos é poupada integralmente.","B) Compras públicas não entram na demanda agregada.","C) O gasto público só afeta a oferta de longo prazo.","D) Gastos públicos dispensam avaliação de qualidade.","E) Cada unidade de gasto entra diretamente na demanda, enquanto parte do alívio tributário pode ser poupada."], c:4, e:"Compras públicas (G) adicionam 100% de seu valor diretamente na demanda agregada; já cortes de impostos são parcialmente poupados."},
+      {q:"5. Para medidas de R$ 100, a hipótese é que as famílias gastem 60% do corte de impostos. Qual comparação dos efeitos diretos (antes do multiplicador) está correta?", o:["A) Ambos geram R$ 100 de demanda privada.","B) G gera R$ 60 e o corte gera R$ 100.","C) G acrescenta R$ 100 diretamente; o corte gera R$ 60 de consumo adicional.","D) O corte gera R$ 160 de consumo imediato.","E) G e o corte não alteram a demanda."], c:2, e:"Compras públicas entram integralmente (R$ 100) como demanda direta; o corte gera 0,60 × 100 = R$ 60 de consumo direto."},
+      {q:"6. Qual argumento favorece cortes de impostos como resposta à recessão?", o:["A) Eles reduzem necessariamente a renda disponível.","B) Podem elevar consumo e criar incentivos ao investimento, trabalho e produção.","C) Eles excluem qualquer efeito sobre oferta.","D) Eles sempre eliminam o déficit público.","E) Eles dispensam considerar os efeitos distributivos."], c:1, e:"Cortes de impostos elevam a renda disponível (demanda) e aumentam incentivos para trabalhar e investir (oferta)."},
+      {q:"7. Qual crítica aos aumentos rápidos de gastos públicos em recessões é apresentada?", o:["A) Eles não podem criar demanda em nenhuma hipótese.","B) Eles reduzem sempre a produtividade de todas as empresas.","C) Eles são necessariamente gratuitos para gerações futuras.","D) Podem financiar projetos de baixa utilidade e exigir impostos futuros.","E) Eles não dependem de escolhas de projetos."], c:3, e:"Aumentos rápidos de G podem gerar desperdício ('pontes para lugar nenhum') e exigir maiores impostos no futuro."},
+      {q:"8. Qual proposta é um exemplo de regra monetária mencionado nos slides?", o:["A) Crescimento constante da quantidade de moeda.","B) Ajustes sem qualquer critério definido.","C) Uso de juros para favorecer candidatos em eleições.","D) Mudança secreta do objetivo a cada reunião.","E) Resposta baseada exclusivamente na preferência pessoal do dirigente."], c:0, e:"Manter uma taxa constante de crescimento da oferta de moeda é a regra monetária clássica citada nos slides."},
+      {q:"9. Na regra de metas descrita nos slides, se a inflação estiver acima da meta, a orientação apresentada é:", o:["A) Aumentar sempre o crescimento monetário.","B) Abandonar qualquer referência à inflação.","C) Aumentar gastos públicos automaticamente.","D) Fixar todos os preços por decreto.","E) Diminuir a taxa de crescimento da moeda."], c:4, e:"Na regra estilizada da aula, inflação acima da meta requer diminuir a taxa de crescimento da moeda."},
+      {q:"10. O uso de política monetária para influenciar eleições é associado a:", o:["A) Neutralidade eleitoral obrigatória.","B) Estabilizador automático.","C) Ciclo de negócios políticos.","D) Produto natural invariável no curto prazo.","E) Imposto sobre consumo."], c:2, e:"Manipulações pré-eleitorais geram flutuações conhecidas como ciclo de negócios políticos."},
+      {q:"11. O que caracteriza a inconsistência temporal discutida?", o:["A) A adoção de uma regra explícita cumprida em todos os períodos.","B) A discrepância entre uma política anunciada e a política efetivamente adotada depois.","C) A inexistência de expectativas dos agentes.","D) A impossibilidade de recessões.","E) A ausência de qualquer escolha monetária."], c:1, e:"Ocorre quando o banco central anuncia compromisso com inflação baixa mas depois expande a moeda para reduzir desemprego."},
+      {q:"12. Qual argumento favorece a discrição monetária?", o:["A) Ela elimina a possibilidade de abuso.","B) Ela torna toda regra desnecessária em qualquer circunstância.","C) Ela impede reação a acontecimentos novos.","D) Ela permite flexibilidade diante de eventos imprevistos e evita a rigidez de regras inadequadas.","E) Ela garante inflação zero sem custos."], c:3, e:"A principal vantagem da discrição é a flexibilidade para lidar com choques econômicos imprevistos."},
+      {q:"13. Qual argumento favorece a meta de inflação zero no debate apresentado?", o:["A) Custos temporários da transição poderiam ser compensados por benefícios permanentes da estabilidade de preços.","B) A transição nunca provoca desemprego.","C) Inflação baixa não tem nenhum custo.","D) A meta elimina toda incerteza econômica.","E) O produto potencial aumenta automaticamente na mesma proporção da desinflação."], c:0, e:"O desemprego gerado na desinflação é temporário, mas os ganhos de eficiência da estabilidade de preços são permanentes."},
+      {q:"14. Como a credibilidade do compromisso com inflação zero poderia reduzir os custos de transição?", o:["A) Elevando a inflação esperada acima da observada.","B) Impedindo qualquer ajuste das expectativas.","C) Garantindo crescimento permanente da demanda nominal.","D) Eliminando a necessidade de qualquer política.","E) Reduzindo a inflação esperada e facilitando o ajuste."], c:4, e:"Um anúncio crível reduz rapidamente P_E, deslocando a OAcp/Curva de Phillips de forma favorável e barateando a desinflação."},
+      {q:"15. Usando apenas a estimativa ilustrativa citada nos slides, de perda acumulada equivalente a 5% do PIB de um ano por ponto percentual de redução da inflação, qual seria o custo de reduzir a inflação de 4% para 2%?", o:["A) 2% do PIB de um ano.","B) 5% do PIB de um ano.","C) 10% do PIB de um ano.","D) 20% do PIB de um ano.","E) 50% do PIB de um ano."], c:2, e:"Queda de 2 pontos percentuais × 5% do PIB por ponto = 10% do PIB de um ano."},
+      {q:"16. Qual preocupação contrária à meta de inflação zero envolve efeitos duradouros?", o:["A) A inflação moderada elimina o desemprego.","B) A desinflação pode reduzir investimento e deteriorar qualificações durante o desemprego.","C) Todo capital humano se recupera instantaneamente.","D) O custo de transição é sempre nulo.","E) O desemprego não afeta a experiência dos trabalhadores."], c:1, e:"A recessão necessária para zerar a inflação pode deixar cicatrizes permanentes (menor estoque de capital e perda de habilidades dos desempregados)."},
+      {q:"17. Qual argumento favorece maior equilíbrio orçamentário?", o:["A) Todo déficit aumenta necessariamente o investimento privado.","B) A dívida não envolve nenhuma consequência intergeracional.","C) O equilíbrio exige eliminar educação em qualquer caso.","D) Déficits podem deslocar investimento privado e prejudicar crescimento e padrões de vida futuros.","E) Déficits são sempre proibidos mesmo durante guerras e recessões."], c:3, e:"Déficits geram crowding-out (reduzem I) e impõem fardo sobre as gerações futuras."},
+      {q:"18. Qual avaliação é compatível com os argumentos contrários à exigência rígida de equilíbrio orçamentário?", o:["A) Cortar educação para reduzir o déficit pode comprometer capital humano; também importa a relação dívida/renda.","B) Toda dívida é irrelevante, qualquer que seja seu tamanho.","C) A composição do ajuste fiscal nunca importa.","D) Elevar qualquer imposto aumenta automaticamente os incentivos à poupança.","E) A relação dívida/renda não informa nada sobre o peso da dívida."], c:0, e:"Críticos destacam que cortar investimentos públicos (como educação) faz mais mal que bem e que a métrica relevante é a relação Dívida/PIB."},
+      {q:"19. Qual justificativa favorece substituir imposto de renda por imposto sobre consumo?", o:["A) Tributar poupança sempre aumenta seu retorno líquido.","B) O imposto de consumo elimina toda desigualdade.","C) As famílias não respondem a incentivos.","D) A reforma necessariamente eleva a poupança pública sem perdas de receita.","E) Reduzir a tributação do retorno da poupança pode aumentar o incentivo a poupar."], c:4, e:"Pessoas respondem a incentivos: deixar de tributar os rendimentos do capital eleva o retorno líquido da poupança."},
+      {q:"20. Qual objeção à reforma tributária para estimular poupança é apresentada?", o:["A) Ela necessariamente reduz a regressividade de todos os tributos.","B) Ela beneficia apenas quem tem menor renda.","C) Pode beneficiar mais os ricos e ampliar o déficit, compensando ganhos de poupança privada.","D) Ela elimina toda tributação do consumo.","E) Ela garante aumento igual de poupança para todas as famílias."], c:2, e:"Impostos sobre consumo são regressivos (pesam mais sobre os mais pobres) e a queda de arrecadação pode reduzir a poupança pública."},
+      {q:"21. (Artigo Empírico) Por que Ilzetzki & Végh (2008) e o estudo recomendam usar a Despesa Primária (e não o Saldo Primário) para testar se a política fiscal é contracíclica?", o:["A) Porque o saldo primário mistura o efeito automático da arrecadação (que sobe com o PIB) com a decisão discricionária do governo, enquanto a despesa isola a decisão de política.","B) Porque a despesa inclui os juros nominais da dívida pública.","C) Porque a arrecadação brasileira é perfeitamente constante ao longo do ciclo.","D) Porque o Tesouro Nacional não divulga o saldo primário.","E) Porque o saldo primário só mede gastos estaduais."], c:0, e:"O saldo primário sofre influência dos estabilizadores automáticos da receita; a despesa primária isola a ação discricionária pura do governo."},
+      {q:"22. (Artigo Empírico) Qual resultado foi encontrado no teste de Causalidade de Granger entre o Hiato do Produto e a Despesa Primária no Brasil (1997–2025)?", o:["A) Apenas o Hiato causa a Despesa com 99% de significância.","B) Hiato → Despesa não foi significativo (p=0,11), mas Despesa → Hiato foi marginalmente significativo nos lags 1, 4 e 5, sugerindo que o gasto público afeta o ciclo (efeito multiplicador).","C) Nenhuma variável tem qualquer relação em nenhuma defasagem.","D) O gasto público sempre reduz o PIB no curto prazo.","E) O K-Means substituiu o teste de Granger."], c:1, e:"O resultado invertido sugere que a despesa atua ativamente influenciando o ciclo (compatível com multiplicador keynesiano) mais do que reagindo passivamente a ele."},
+      {q:"23. (Artigo Empírico) Por que o estudo optou pela Correlação Móvel (janela de 12 trimestres) em vez da clusterização por K-Means?", o:["A) Porque o K-Means não funciona com números negativos.","B) Porque a despesa trimestral é ruidosa (precatórios, itens pontuais), fazendo o K-Means agrupar trimestres avulsos sem formar períodos contínuos no tempo.","C) Porque a correlação móvel ignora a ordem cronológica.","D) Porque só existiu um único regime fiscal de 1997 a 2025.","E) Porque o filtro HP proíbe o uso de K-Means."], c:1, e:"A correlação móvel de 12 trimestres preserva a sequência cronológica e permite identificar os 7 regimes históricos contínuos."},
+      {q:"24. (Artigo Empírico) Na literatura brasileira citada no estudo, qual diferença metodológica explica por que alguns autores (como Mello, Rocha e Luporini) acharam política 'acíclica', enquanto Mendonça et al., Wichmann & Portugal e Pires acharam resultados mais ricos?", o:["A) Os primeiros usaram dados anuais da Argentina.","B) Os três últimos modelaram explicitamente 'mudanças de regime' (Markov-Switching), evitando que períodos pró-cíclicos e contracíclicos se anulassem numa média única.","C) Os primeiros usaram apenas dados da pandemia.","D) Modelos de mudança de regime assumem que a relação é fixa para sempre.","E) Apenas modelos MQO simples capturam crises."], c:1, e:"Como a relação muda de sinal nas crises agudas, modelos de equação única tiram a média de sinais opostos e concluem erroneamente por 'acíclica'."},
+      {q:"25. (Artigo Empírico) Qual é a conclusão central sobre o comportamento da despesa primária no Brasil entre 1997 e 2025?", o:["A) É permanentemente contracíclica como nos países desenvolvidos.","B) É exclusivamente pró-cíclica, inclusive em 2008 e 2020.","C) Depende estritamente do partido político: um partido é sempre contracíclico e o outro é sempre pró-cíclico.","D) Apresenta 'graduação condicional': é predominantemente pró-cíclica em tempos normais, mas torna-se fortemente contracíclica nas grandes emergências (Crise de 2008-09 e Pandemia de 2020), sob diferentes governos.","E) Foi fortemente contracíclica apenas entre 2003 e 2007."], c:3, e:"A contraciclicidade forte no Brasil ocorreu nos dois grandes choques (2008-09 com r ≈ -0,77 e 2020 com r = -0,94), enquanto fora das crises agudas predominou a tendência pró-cíclica."}
+    ]
+  }
+];
+
+let currentModuleIndex = 0;
+let currentTab = 'resumo';
+let currentFilter = 'all';
+let userAnswers = JSON.parse(localStorage.getItem('macro_ita_full_v2') || '{}');
+
+function saveAnswers() {
+  localStorage.setItem('macro_ita_full_v2', JSON.stringify(userAnswers));
+  updateScoreUI();
+}
+
+function resetProgress() {
+  if (confirm('Deseja zerar todas as 164 respostas salvas?')) {
+    userAnswers = {};
+    saveAnswers();
+    renderNav();
+    renderContent();
+  }
+}
+
+function setFilter(flt) {
+  currentFilter = flt;
+  ['all', 'unanswered', 'wrong'].forEach(f => {
+    const btn = document.getElementById(`flt-${f}`);
+    if (f === flt) {
+      btn.className = "px-2.5 py-1 rounded bg-blue-600 text-white font-medium";
+    } else {
+      btn.className = "px-2.5 py-1 rounded bg-gray-800 text-gray-300 hover:bg-gray-700";
+    }
+  });
+  renderContent();
+}
+
+function updateScoreUI() {
+  let totalAnswered = 0;
+  let totalCorrect = 0;
+  let totalQuestions = 0;
+
+  modulesData.forEach((mod, mIdx) => {
+    mod.questions.forEach((q, qIdx) => {
+      totalQuestions++;
+      const key = `${mIdx}-${qIdx}`;
+      if (userAnswers[key] !== undefined) {
+        totalAnswered++;
+        if (userAnswers[key] === q.c) totalCorrect++;
+      }
+    });
+  });
+
+  document.getElementById('score-text').textContent = `${totalCorrect} / ${totalQuestions} (${totalAnswered} resp.)`;
+  const barPct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+  const hitRate = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+  document.getElementById('score-bar').style.width = `${barPct}%`;
+  document.getElementById('pct-text').textContent = `${hitRate}% de acerto nas respondidas`;
+}
+
+function renderNav() {
+  const nav = document.getElementById('module-nav');
+  nav.innerHTML = modulesData.map((mod, idx) => {
+    const isActive = idx === currentModuleIndex && currentTab !== 'todas';
+    const modCorrect = mod.questions.filter((q, qIdx) => userAnswers[`${idx}-${qIdx}`] === q.c).length;
+    const modAnswered = mod.questions.filter((q, qIdx) => userAnswers[`${idx}-${qIdx}`] !== undefined).length;
+    return `
+      <button onclick="selectModule(${idx})" class="w-full text-left p-3 rounded-lg transition-all border ${
+        isActive 
+          ? 'bg-blue-600/20 border-blue-500 text-white shadow-sm' 
+          : 'bg-gray-900/40 border-gray-800/60 text-gray-400 hover:bg-gray-800/60 hover:text-gray-200'
+      }">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold uppercase tracking-wider ${isActive ? 'text-blue-400' : 'text-gray-400'}">${mod.id}</span>
+          <span class="text-[11px] px-2 py-0.5 rounded-full ${modAnswered === mod.questions.length ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700' : 'bg-gray-800 text-gray-300'}">${modCorrect}/${mod.questions.length}</span>
+        </div>
+        <div class="font-semibold text-xs mt-1 text-gray-200 line-clamp-1">${mod.title.replace(/^Aula [^:]+:\s*/, '')}</div>
+      </button>
+    `;
+  }).join('');
+}
+
+function selectModule(idx) {
+  currentModuleIndex = idx;
+  if (currentTab === 'todas') currentTab = 'resumo';
+  updateTabButtons();
+  renderNav();
+  renderContent();
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  updateTabButtons();
+  renderNav();
+  renderContent();
+  window.scrollTo(0, 0);
+}
+
+function updateTabButtons() {
+  const tabs = ['resumo', 'questoes', 'todas'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tab-${t}`);
+    if (t === currentTab) {
+      btn.className = "px-3.5 py-1.5 rounded-md text-xs md:text-sm font-semibold bg-blue-600 text-white";
+    } else {
+      btn.className = "px-3.5 py-1.5 rounded-md text-xs md:text-sm font-semibold text-gray-400 hover:text-white";
+    }
+  });
+  const filterBar = document.getElementById('filter-bar');
+  if (currentTab === 'resumo') {
+    filterBar.classList.add('hidden');
+  } else {
+    filterBar.classList.remove('hidden');
+  }
+}
+
+function answerQuestion(mIdx, qIdx, optIdx) {
+  const key = `${mIdx}-${qIdx}`;
+  if (userAnswers[key] !== undefined) return;
+  userAnswers[key] = optIdx;
+  saveAnswers();
+  renderNav();
+  renderContent();
+}
+
+function resetSingleQuestion(mIdx, qIdx) {
+  const key = `${mIdx}-${qIdx}`;
+  delete userAnswers[key];
+  saveAnswers();
+  renderNav();
+  renderContent();
+}
+
+function renderQuestionCard(mIdx, qIdx, qObj, badgeText) {
+  const key = `${mIdx}-${qIdx}`;
+  const answered = userAnswers[key];
+  const isAnswered = answered !== undefined;
+
+  const optionsHtml = qObj.o.map((opt, oIdx) => {
+    let btnStyle = "bg-gray-950 border-gray-800 text-gray-300 hover:border-blue-500/60";
+    if (isAnswered) {
+      if (oIdx === qObj.c) {
+        btnStyle = "bg-emerald-950/60 border-emerald-500 text-emerald-200 font-semibold";
+      } else if (oIdx === answered && answered !== qObj.c) {
+        btnStyle = "bg-red-950/60 border-red-500 text-red-200 line-through opacity-80";
+      } else {
+        btnStyle = "bg-gray-950 border-gray-800/50 text-gray-500 opacity-60";
+      }
+    }
+
+    return `
+      <button 
+        onclick="answerQuestion(${mIdx}, ${qIdx}, ${oIdx})" 
+        ${isAnswered ? 'disabled' : ''}
+        class="option-btn w-full text-left p-3 rounded-lg border text-xs md:text-sm ${btnStyle}">
+        ${opt}
+      </button>
+    `;
+  }).join('');
+
+  const feedbackHtml = isAnswered ? `
+    <div class="mt-3 p-3.5 rounded-lg border text-xs ${
+      answered === qObj.c 
+        ? 'bg-emerald-950/30 border-emerald-800 text-emerald-200' 
+        : 'bg-amber-950/30 border-amber-800 text-amber-200'
+    }">
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-bold">${answered === qObj.c ? '✅ Correto!' : '❌ Incorreto'}</span>
+        <button onclick="resetSingleQuestion(${mIdx}, ${qIdx})" class="text-[11px] underline opacity-80 hover:opacity-100">Tentar novamente</button>
+      </div>
+      <p class="leading-relaxed text-gray-200">${qObj.e}</p>
+    </div>
+  ` : '';
+
+  return `
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-blue-400">${badgeText}</span>
+      </div>
+      <p class="text-white font-medium text-sm md:text-base mb-3.5 leading-relaxed">${qObj.q}</p>
+      <div class="space-y-2">
+        ${optionsHtml}
+      </div>
+      ${feedbackHtml}
+    </div>
+  `;
+}
+
+function shouldShowQuestion(mIdx, qIdx, qObj, searchTerm) {
+  const key = `${mIdx}-${qIdx}`;
+  const answered = userAnswers[key];
+  if (currentFilter === 'unanswered' && answered !== undefined) return false;
+  if (currentFilter === 'wrong' && (answered === undefined || answered === qObj.c)) return false;
+  if (searchTerm) {
+    const text = (qObj.q + ' ' + qObj.o.join(' ') + ' ' + qObj.e).toLowerCase();
+    if (!text.includes(searchTerm)) return false;
+  }
+  return true;
+}
+
+function renderContent() {
+  const area = document.getElementById('content-area');
+  const titleEl = document.getElementById('current-module-title');
+  const subEl = document.getElementById('current-module-sub');
+  const mod = modulesData[currentModuleIndex];
+  const searchTerm = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+
+  if (currentTab === 'resumo') {
+    titleEl.textContent = mod.title;
+    subEl.textContent = mod.subtitle;
+    area.innerHTML = `
+      ${mod.summary}
+      <div class="pt-4">
+        <button onclick="switchTab('questoes')" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition text-sm">
+          🎯 Resolver as ${mod.questions.length} Questões desta Aula →
+        </button>
+      </div>
+    `;
+  } else if (currentTab === 'questoes') {
+    titleEl.textContent = `${mod.title} — Lista Oficial`;
+    subEl.textContent = `${mod.questions.length} questões comentadas`;
+    const filtered = mod.questions
+      .map((q, qIdx) => ({ q, qIdx }))
+      .filter(item => shouldShowQuestion(currentModuleIndex, item.qIdx, item.q, searchTerm));
+
+    const cards = filtered.length > 0
+      ? filtered.map(item => renderQuestionCard(currentModuleIndex, item.qIdx, item.q, `${mod.id} • Questão ${item.qIdx + 1}`)).join('')
+      : `<div class="text-center py-12 text-gray-400 text-sm">Nenhuma questão encontrada para este filtro.</div>`;
+
+    const nextModBtn = currentModuleIndex < modulesData.length - 1 ? `
+      <button onclick="selectModule(${currentModuleIndex + 1}); switchTab('resumo');" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition text-xs md:text-sm">
+        Próxima Aula (${modulesData[currentModuleIndex + 1].id}) →
+      </button>
+    ` : '';
+
+    area.innerHTML = `
+      <div class="space-y-5">${cards}</div>
+      <div class="flex justify-between items-center pt-6">
+        <button onclick="switchTab('resumo')" class="px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl transition text-xs md:text-sm">
+          ← Voltar ao Resumo
+        </button>
+        ${nextModBtn}
+      </div>
+    `;
+  } else if (currentTab === 'todas') {
+    titleEl.textContent = "🔥 Simulado Completo (Todas as 164 Questões)";
+    subEl.textContent = "Todas as listas oficiais (Aulas 1 a 7.2) + Questões do Artigo Empírico";
+    let allCards = [];
+    modulesData.forEach((m, mIdx) => {
+      m.questions.forEach((q, qIdx) => {
+        if (shouldShowQuestion(mIdx, qIdx, q, searchTerm)) {
+          allCards.push(renderQuestionCard(mIdx, qIdx, q, `${m.id} • Questão ${qIdx + 1}`));
+        }
+      });
+    });
+    area.innerHTML = allCards.length > 0
+      ? `<div class="space-y-5">${allCards.join('')}</div>`
+      : `<div class="text-center py-12 text-gray-400 text-sm">Nenhuma questão encontrada para este filtro.</div>`;
+  }
+}
+
+updateScoreUI();
+renderNav();
+renderContent();
+</script>
+</body>
+</html>

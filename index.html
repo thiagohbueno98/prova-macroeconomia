@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script>
   // aplica o tema salvo antes de pintar a página
   try { var t = localStorage.getItem('macro_ita_theme'); if (t) document.documentElement.setAttribute('data-theme', JSON.parse(t)); } catch (e) {}
@@ -113,18 +114,27 @@ input,select{font:inherit;color:inherit}
 .grid2,.grid3{display:grid;gap:12px;margin:12px 0}
 .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:minmax(0,1fr)}}
 .box{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
 .box ul{padding-left:18px;margin:6px 0 0}
 .box > b:first-child{display:inline-block;margin-bottom:2px}
 .c1{color:var(--c1)}.c2{color:var(--c2)}.c3{color:var(--c3)}.c4{color:var(--c4)}
 .ok{color:var(--ok);font-weight:600}.no{color:var(--no);font-weight:600}
 .up{color:var(--ok);font-weight:700}.dn{color:var(--no);font-weight:700}
-.f{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:2px 8px;display:inline-block;color:var(--tx);margin:4px 0;font-weight:600}
+.f{font-family:inherit;font-size:14px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:2px 8px;display:inline-block;color:var(--tx);margin:4px 0;font-weight:600}
 .box .f{display:block;width:fit-content;margin:6px 0}
+/* fórmulas renderizadas pelo KaTeX */
+.katex{font-size:1.1em}
+.f .katex{font-size:1.18em}
+.f.big .katex{font-size:1.35em}
+.f:has(.katex){font-family:inherit;padding:6px 12px}
+.f.big:has(.katex){padding:10px 18px}
+.katex-display{margin:.4em 0}
+.fb .katex,.fc .katex,.traps .katex{font-size:1.08em}
 .f.big{display:block;width:fit-content;max-width:100%;font-size:16px;padding:8px 14px;margin:10px auto;text-align:center;border-color:color-mix(in srgb,var(--a) 45%,var(--line));color:var(--at)}
-.t{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0;display:block;overflow-x:auto}
-.t thead,.t tbody{display:table;width:100%;border-collapse:collapse}
+.t{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+/* no celular a tabela rola de lado; cabeçalho e corpo continuam na mesma grade */
+@media (max-width:760px){.t{display:block;overflow-x:auto;position:relative}}
 .t th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
 .t td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 .t tr:last-child td{border-bottom:0}
@@ -223,7 +233,7 @@ input,select{font:inherit;color:inherit}
 .lab > p.muted{margin:0 0 12px}
 .lab-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
 .lab-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:860px){.lab-grid,.lab-grid.three{grid-template-columns:1fr}}
+@media (max-width:860px){.lab-grid,.lab-grid.three{grid-template-columns:minmax(0,1fr)}}
 .chart{width:100%;height:auto;display:block;max-width:520px;margin:0 auto;overflow:visible}
 .chart .ax{stroke:var(--tx2);stroke-width:1.5}
 .chart .axl{fill:var(--tx2);font-size:12px;font-weight:600}
@@ -320,8 +330,8 @@ details.rev p{font-size:13.5px;margin:6px 0}
 .fitem{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-left:4px solid var(--a)}
 .fitem small{font-size:11px;font-weight:800;color:var(--at);text-transform:uppercase;letter-spacing:.06em}
 .fitem b{display:block;font-size:14px;margin:2px 0 4px}
-.fitem .f{font-size:14px}
-.fitem span{display:block;font-size:12.5px;color:var(--mut)}
+.fitem .f{font-size:14px;display:block;width:fit-content;margin:6px 0}
+.fitem > span:not(.f){display:block;font-size:12.5px;color:var(--mut)}
 .traps{display:grid;gap:8px;padding:0;margin:0;list-style:none}
 .traps li{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:9px 13px;font-size:14px}
 </style>
@@ -348,6 +358,8 @@ details.rev p{font-size:13.5px;margin:6px 0}
     <main class="view" id="view"></main>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script src="assets/questoes.js"></script>
 <script src="assets/conteudo.js"></script>
 <script src="assets/app.js"></script>

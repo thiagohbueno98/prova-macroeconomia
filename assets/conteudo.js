@@ -54,7 +54,7 @@ const AULAS = [
   </section>
 
   <section class="sec">
-    <h3><span class="n">3</span> Os componentes: <span class="f">Y = C + I + G + EL</span></h3>
+    <h3><span class="n">3</span> Os componentes: <span class="f">\\(Y = C + I + G + EL\\)</span></h3>
     <div class="grid2">
       <div class="box"><b class="c1">C — Consumo</b><br>Gasto das famílias em bens tangíveis e serviços intangíveis. Carro novo comprado por família = C (não é I!).</div>
       <div class="box"><b class="c2">I — Investimento</b><br>Gasto em bens que serão usados para produzir mais no futuro: <b>bens de capital</b> (máquinas, ferramentas), <b>estruturas</b> (fábricas, escritórios, <b>casas novas</b>, estradas) e <b>estoques</b> (produziu e não vendeu).</div>
@@ -69,9 +69,9 @@ const AULAS = [
   <section class="sec">
     <h3><span class="n">4</span> PIB nominal, PIB real e deflator</h3>
     <div class="grid3">
-      <div class="box"><b>PIB nominal</b><div class="f">Σ P<sub>atual</sub> × Q<sub>atual</sub></div>Preços correntes. Muda por <b>preço e quantidade</b>.</div>
-      <div class="box"><b>PIB real</b><div class="f">Σ P<sub>base</sub> × Q<sub>atual</sub></div>Preços do ano-base. Muda <b>só por quantidade</b> (corrigido pela inflação).</div>
-      <div class="box"><b>Deflator</b><div class="f">100 × Nominal ÷ Real</div>Medida do nível geral de preços. Inflação = variação % do deflator.</div>
+      <div class="box"><b>PIB nominal</b><div class="f">\\(\\sum P_{\\text{atual}} \\times Q_{\\text{atual}}\\)</div>Preços correntes. Muda por <b>preço e quantidade</b>.</div>
+      <div class="box"><b>PIB real</b><div class="f">\\(\\sum P_{\\text{base}} \\times Q_{\\text{atual}}\\)</div>Preços do ano-base. Muda <b>só por quantidade</b> (corrigido pela inflação).</div>
+      <div class="box"><b>Deflator</b><div class="f">\\(100 \\times \\dfrac{\\text{Nominal}}{\\text{Real}}\\)</div>Medida do nível geral de preços. Inflação = variação % do deflator.</div>
     </div>
     <div class="ex"><b>Exemplo dos slides (ano-base 2018):</b>
       <table class="t sm">
@@ -85,10 +85,10 @@ const AULAS = [
       Real 2019 = 10×500 + 2×1100 = 7.200 (preços de 2018, quantidades de 2019). O nominal cresceu 37,5%, mas só 20% foi produção de verdade.
     </div>
     <div class="grid2">
-      <div class="box"><b>Truque 1 — achar o real a partir do deflator</b><div class="f">PIB real = 100 × Nominal ÷ Deflator</div>Q18: 900 ÷ 1,20 = 750 e 1.080 ÷ 1,35 = 800 → cresceu 6,7%.</div>
-      <div class="box"><b>Truque 2 — inflação pelo deflator</b><div class="f">π = (D<sub>2</sub> − D<sub>1</sub>) ÷ D<sub>1</sub></div>Q12: (126 − 120) ÷ 120 = 5% (e não 6%!).</div>
+      <div class="box"><b>Truque 1 — achar o real a partir do deflator</b><div class="f">\\(\\text{PIB real} = 100 \\times \\dfrac{\\text{Nominal}}{\\text{Deflator}}\\)</div>Q18: \\(\\dfrac{900}{1{,}20} = 750\\) e \\(\\dfrac{1.080}{1{,}35} = 800\\) → cresceu 6,7%.</div>
+      <div class="box"><b>Truque 2 — inflação pelo deflator</b><div class="f">\\(\\pi = \\dfrac{D_2 - D_1}{D_1}\\)</div>Q12: \\(\\dfrac{126 - 120}{120} = 5\\%\\) (e não 6%!).</div>
     </div>
-    <div class="extra"><b>Complemento:</b> (1 + crescimento nominal) = (1 + crescimento real) × (1 + inflação). Para valores pequenos, <b>nominal ≈ real + inflação</b>. Na Q13 (nominal 12%, real 3%) a inflação implícita é ≈ 9% (exato: 1,12 ÷ 1,03 − 1 ≈ 8,7%).</div>
+    <div class="extra"><b>Complemento:</b> (1 + crescimento nominal) = (1 + crescimento real) × (1 + inflação). Para valores pequenos, <b>nominal ≈ real + inflação</b>. Na Q13 (nominal 12%, real 3%) a inflação implícita é ≈ 9% (exato: \\(\\dfrac{1{,}12}{1{,}03} - 1 \\approx 8{,}7\\%\\)).</div>
   </section>
 
   <section class="sec">
@@ -116,8 +116,8 @@ const AULAS = [
     ["O que entra em I?", "Bens de capital (máquinas), estruturas (fábricas, casas novas, estradas) e variação de estoques. Ativos financeiros não."],
     ["Por que transferências ficam fora de G?", "Não são compra de bens/serviços pelo governo. Quando o beneficiário gasta, o gasto aparece em C (contar em G seria dupla contagem)."],
     ["PIB nominal × real", "Nominal: preços correntes (varia com P e Q). Real: preços do ano-base (varia só com Q)."],
-    ["Deflator do PIB", "100 × PIB nominal ÷ PIB real. Mede o nível geral de preços; sua variação % é uma medida de inflação."],
-    ["Como achar o PIB real com o deflator?", "PIB real = 100 × PIB nominal ÷ deflator."],
+    ["Deflator do PIB", "\\(100 \\times \\dfrac{\\text{PIB nominal}}{\\text{PIB real}}\\). Mede o nível geral de preços; sua variação % é uma medida de inflação."],
+    ["Como achar o PIB real com o deflator?", "\\(\\text{PIB real} = 100 \\times \\dfrac{\\text{PIB nominal}}{\\text{deflator}}\\)"],
     ["4 coisas que o PIB não mede", "Qualidade ambiental, lazer, atividades sem mercado, distribuição da renda."],
     ["Peso de C no PIB brasileiro (2023)", "≈ 63% (G ≈ 18%, I ≈ 16%, X ≈ 18%, M ≈ −16%)."]
   ]
@@ -136,11 +136,11 @@ const AULAS = [
   <section class="sec">
     <h3><span class="n">1</span> Os três tipos de poupança</h3>
     <div class="grid3">
-      <div class="box"><b class="c1">Poupança privada</b><div class="f">S<sub>priv</sub> = Y − T − C</div>O que sobra da renda das famílias depois de impostos e consumo.</div>
-      <div class="box"><b class="c3">Poupança pública</b><div class="f">S<sub>pub</sub> = T − G</div>T &gt; G: <b>superávit</b>. T &lt; G: <b>déficit</b> (poupança pública negativa).</div>
-      <div class="box"><b class="c2">Poupança nacional</b><div class="f">S = (Y−T−C) + (T−G) = Y − C − G</div>A parte da renda que não vai para consumo nem compras do governo.</div>
+      <div class="box"><b class="c1">Poupança privada</b><div class="f">\\(S_{\\text{priv}} = Y - T - C\\)</div>O que sobra da renda das famílias depois de impostos e consumo.</div>
+      <div class="box"><b class="c3">Poupança pública</b><div class="f">\\(S_{\\text{pub}} = T - G\\)</div>T &gt; G: <b>superávit</b>. T &lt; G: <b>déficit</b> (poupança pública negativa).</div>
+      <div class="box"><b class="c2">Poupança nacional</b><div class="f">\\(S = (Y - T - C) + (T - G) = Y - C - G\\)</div>A parte da renda que não vai para consumo nem compras do governo.</div>
     </div>
-    <div class="ex"><b>Por que S = I na economia fechada?</b> Partindo de Y = C + I + G (sem EL) e isolando I: <span class="f">I = Y − C − G</span>. Mas Y − C − G é exatamente S. Logo <b>S = I</b> — é uma identidade contábil.<br><br>
+    <div class="ex"><b>Por que S = I na economia fechada?</b> Partindo de Y = C + I + G (sem EL) e isolando I: <span class="f">\\(I = Y - C - G\\)</span>. Mas Y − C − G é exatamente S. Logo <b>S = I</b> — é uma identidade contábil.<br><br>
     <b>Exemplo (Q15):</b> Y = 3.000, T = 700, C = 1.900, G = 800 → S<sub>priv</sub> = 400; S<sub>pub</sub> = −100 (déficit); S = 300 = I.</div>
   </section>
 
@@ -194,9 +194,9 @@ const AULAS = [
     "Comprar ações, CDB ou fundo é poupança; investimento é capital novo (máquina, fábrica, casa nova)."
   ],
   cards: [
-    ["Poupança privada", "S_priv = Y − T − C."],
-    ["Poupança pública", "S_pub = T − G (positiva = superávit; negativa = déficit)."],
-    ["Poupança nacional", "S = Y − C − G = S_priv + S_pub. Na economia fechada, S = I."],
+    ["Poupança privada", "\\(S_{\\text{priv}} = Y - T - C\\)"],
+    ["Poupança pública", "\\(S_{\\text{pub}} = T - G\\) (positiva = superávit; negativa = déficit)."],
+    ["Poupança nacional", "\\(S = Y - C - G = S_{\\text{priv}} + S_{\\text{pub}}\\). Na economia fechada, \\(S = I\\)."],
     ["Quem oferta e quem demanda fundos emprestáveis?", "Oferta: poupança (S), inclinação positiva. Demanda: investimento (I), inclinação negativa."],
     ["Por que a oferta de fundos sobe com r?", "r é o retorno da poupança: juros maiores tornam poupar mais atraente."],
     ["Por que a demanda de fundos cai com r?", "r é o custo do empréstimo: juros maiores inviabilizam projetos de investimento."],
@@ -214,7 +214,7 @@ const AULAS = [
   tema: "Moeda, reservas fracionárias, multiplicador e ferramentas do BACEN",
   lab: "mult",
   resumo: `
-  <div class="tldr"><b>Em uma frase:</b> moeda é o que as pessoas usam para comprar coisas umas das outras. Os bancos, ao emprestar parte dos depósitos, <b>criam moeda</b> (mas não riqueza): cada R$ 1 de reservas vira até <b>1/R</b> reais. O BACEN controla a oferta de moeda principalmente com <b>operações de mercado aberto</b>.</div>
+  <div class="tldr"><b>Em uma frase:</b> moeda é o que as pessoas usam para comprar coisas umas das outras. Os bancos, ao emprestar parte dos depósitos, <b>criam moeda</b> (mas não riqueza): cada R$ 1 de reservas vira até <b>\\(\\dfrac{1}{R}\\)</b> reais. O BACEN controla a oferta de moeda principalmente com <b>operações de mercado aberto</b>.</div>
 
   <section class="sec">
     <h3><span class="n">1</span> Por que a moeda existe</h3>
@@ -253,7 +253,7 @@ const AULAS = [
         <div class="tc-a"><b>Ativos</b><br>Reservas R$ 10<br>Empréstimos R$ 90</div>
         <div class="tc-p"><b>Passivos</b><br>Depósitos R$ 100</div>
       </div>
-      <div class="box"><b>Como lembrar:</b> o depósito é uma <b>dívida do banco com você</b> → passivo. O empréstimo é um <b>direito do banco</b> de receber → ativo.<div class="f">R = Reservas ÷ Depósitos = 10 ÷ 100 = 10%</div></div>
+      <div class="box"><b>Como lembrar:</b> o depósito é uma <b>dívida do banco com você</b> → passivo. O empréstimo é um <b>direito do banco</b> de receber → ativo.<div class="f">\\(R = \\dfrac{\\text{Reservas}}{\\text{Depósitos}} = \\dfrac{10}{100} = 10\\%\\)</div></div>
     </div>
   </section>
 
@@ -269,10 +269,10 @@ const AULAS = [
     </table>
     <div class="chain"><span>Depósito 100</span><span>empresta 90</span><span>Banco Y: empresta 81</span><span>Banco Z: empresta 72,90</span><span>⋯</span><span>Total = R$ 1.000</span></div>
     <div class="grid2">
-      <div class="box"><b>Multiplicador monetário</b><div class="f">m = 1 ÷ R</div>R = 10% → m = 10 → R$ 100 de reservas viram R$ 1.000 de moeda.<br><span class="muted">É a soma 100 + 90 + 81 + … = 100 ÷ (1 − 0,9).</span></div>
+      <div class="box"><b>Multiplicador monetário</b><div class="f">\\(m = \\dfrac{1}{R}\\)</div>R = 10% → m = 10 → R$ 100 de reservas viram R$ 1.000 de moeda.<br><span class="muted">É a soma \\(100 + 90 + 81 + \\dots = \\dfrac{100}{1 - 0{,}9}\\).</span></div>
       <div class="box"><b>Cria moeda, não riqueza:</b> o tomador recebe R$ 90 em moeda (ativo que conta na oferta de moeda), mas também uma dívida de R$ 90 (passivo que não reduz a oferta de moeda).</div>
     </div>
-    <table class="t sm"><thead><tr><th>R</th><th>100%</th><th>25%</th><th>20%</th><th>10%</th><th>5%</th></tr></thead><tbody><tr><td><b>m = 1/R</b></td><td>1</td><td>4</td><td>5</td><td>10</td><td>20</td></tr></tbody></table>
+    <table class="t sm"><thead><tr><th>R</th><th>100%</th><th>25%</th><th>20%</th><th>10%</th><th>5%</th></tr></thead><tbody><tr><td><b>\\(m = \\dfrac{1}{R}\\)</b></td><td>1</td><td>4</td><td>5</td><td>10</td><td>20</td></tr></tbody></table>
   </section>
 
   <section class="sec">
@@ -300,7 +300,7 @@ const AULAS = [
   pegadinhas: [
     "Depósitos são PASSIVOS do banco; empréstimos e reservas são ATIVOS.",
     "Com 100% de reservas, o multiplicador é 1: os bancos não criam moeda.",
-    "Compulsório maior → R maior → multiplicador (1/R) MENOR → menos moeda.",
+    "Compulsório maior → R maior → multiplicador \\(\\left(\\dfrac{1}{R}\\right)\\) MENOR → menos moeda.",
     "Comprar títulos aumenta a oferta de moeda; vender títulos reduz.",
     "Bancos criam moeda, mas não riqueza (o tomador fica com uma dívida do mesmo valor).",
     "Unidade de conta = anunciar preços e registrar débitos. Reserva de valor = transferir poder de compra no tempo."
@@ -310,8 +310,8 @@ const AULAS = [
     ["Dupla coincidência de desejos", "Problema do escambo: precisa que cada parte tenha exatamente o que a outra quer."],
     ["Moeda fiduciária", "Sem valor intrínseco, vale por decreto do governo (R$, US$). Oposto: moeda-mercadoria (ouro)."],
     ["M1 e M2", "M1 = papel-moeda em poder do público + depósitos à vista. M2 = M1 + poupança + títulos privados do SFN."],
-    ["Razão de reserva R", "Reservas ÷ depósitos."],
-    ["Multiplicador monetário", "m = 1/R. Com R = 10%, R$ 100 de reservas sustentam R$ 1.000 de moeda."],
+    ["Razão de reserva R", "\\(R = \\dfrac{\\text{Reservas}}{\\text{Depósitos}}\\)"],
+    ["Multiplicador monetário", "\\(m = \\dfrac{1}{R}\\). Com R = 10%, R$ 100 de reservas sustentam R$ 1.000 de moeda."],
     ["Ferramenta mais usada pelo BACEN", "Operações de mercado aberto (compra e venda de títulos públicos)."],
     ["Taxa de desconto", "Juros que o BACEN cobra ao emprestar aos bancos. Usada principalmente em crises."],
     ["Corrida bancária e oferta de moeda", "Saques em massa + bancos retendo reservas → R sobe → oferta de moeda cai."],
@@ -366,11 +366,11 @@ const AULAS = [
 
   <section class="sec">
     <h3><span class="n">4</span> Câmbio real</h3>
-    <div class="f big">E = (e × P*) ÷ P</div>
+    <div class="f big">\\(E = \\dfrac{e \\times P^{*}}{P}\\)</div>
     <p>P = preço doméstico (em R$); P* = preço externo (em moeda estrangeira); e = câmbio nominal. Para muitos bens, P é um índice como o IPCA e P* o índice de preços dos EUA.</p>
     <div class="ex"><b>Exemplo do Big Mac:</b> US$ 3 nos EUA, R$ 30 no Brasil, e = 5 R$/US$.<br>
       e × P* = 5 × 3 = R$ 15 (preço em reais do Big Mac americano).<br>
-      E = 15 ÷ 30 = <b>0,5 Big Mac brasileiro por Big Mac americano</b>.<br>
+      \\(E = \\dfrac{15}{30}\\) = <b>0,5 Big Mac brasileiro por Big Mac americano</b>.<br>
       Leitura: para comprar um Big Mac nos EUA, o brasileiro abre mão do que compraria 0,5 Big Mac aqui → o lanche americano está “barato” para nós.</div>
     <p>Se o câmbio real do Brasil se <b>aprecia</b>, os bens brasileiros ficam <b>mais caros</b> em relação aos estrangeiros (exportamos menos, importamos mais).</p>
   </section>
@@ -379,7 +379,7 @@ const AULAS = [
     <h3><span class="n">5</span> Lei do preço único e PPC</h3>
     <p><b>Lei do preço único</b>: um bem deve custar o mesmo em todo lugar. Café a R$ 4 em São Paulo e R$ 5 em Buenos Aires, sem custo de transporte → <b>arbitragem</b>: compra em SP, vende em BA. Isso sobe o preço em SP e derruba em BA até igualar.</p>
     <p><b>Paridade do Poder de Compra (PPC)</b>: uma unidade de qualquer moeda deveria comprar a mesma quantidade de bens em todos os países. Implica que o câmbio nominal se ajusta para igualar o preço da cesta em todo lugar:</p>
-    <div class="f big">e = P* ÷ P</div>
+    <div class="f big">\\(e = \\dfrac{P^{*}}{P}\\)</div>
     <p>Se a inflação é maior na Argentina que no Brasil, P* sobe mais rápido que P, <b>e aumenta</b> — o real valoriza contra o peso.</p>
     <div class="grid2">
       <div class="box"><b>Limitação 1 — bens não comercializáveis</b> (non-tradables): corte de cabelo, massagem, troca de pneu. Não dá para arbitrar.</div>
@@ -394,13 +394,13 @@ const AULAS = [
       <thead><tr><th></th><th>Convenção A — “R$ por US$”</th><th>Convenção B — Mankiw</th></tr></thead>
       <tbody>
         <tr><td>Câmbio nominal</td><td>e = reais por dólar (5 R$/US$)</td><td>e = moeda estrangeira por real</td></tr>
-        <tr><td>Câmbio real</td><td>E = e·P*/P = bens BR por bem estrangeiro (Big Mac: 0,5)</td><td>E = bens estrangeiros por bem BR</td></tr>
+        <tr><td>Câmbio real</td><td>\\(E = \\dfrac{e \\cdot P^{*}}{P}\\) = bens BR por bem estrangeiro (Big Mac: 0,5)</td><td>E = bens estrangeiros por bem BR</td></tr>
         <tr><td>Se e ou E <b>sobe</b>…</td><td>o real <b class="no">desvaloriza</b></td><td>o real <b class="ok">valoriza</b></td></tr>
-        <tr><td>Onde aparece</td><td>Slides de câmbio nominal e do Big Mac (Aula 4)</td><td>Slide da PPC (e = P*/P) e <b>toda a Aula 5</b></td></tr>
+        <tr><td>Onde aparece</td><td>Slides de câmbio nominal e do Big Mac (Aula 4)</td><td>Slide da PPC (\\(e = \\dfrac{P^{*}}{P}\\)) e <b>toda a Aula 5</b></td></tr>
       </tbody>
     </table>
     <p><b>Na prova:</b> nas contas (Q11, Q15), aplique a fórmula exatamente como o enunciado der. Para dizer se “aumento” é apreciação ou depreciação, veja qual convenção a questão usa. Na Aula 5 vale sempre: <b>E ↑ = apreciação real do real</b>.</p>
-    <p class="muted">Por que a PPC dá e = P*/P? Na convenção B, R$ 1 compra 1/P bens aqui e e/P* bens lá fora. Igualando: e = P*/P. Na convenção A, a mesma ideia daria e = P/P* (no Big Mac: 30/3 = 10 R$/US$, o inverso de 0,1 US$/R$).</p>
+    <p class="muted">Por que a PPC dá \\(e = \\dfrac{P^{*}}{P}\\)? Na convenção B, R$ 1 compra \\(\\dfrac{1}{P}\\) bens aqui e \\(\\dfrac{e}{P^{*}}\\) bens lá fora. Igualando: \\(e = \\dfrac{P^{*}}{P}\\). Na convenção A, a mesma ideia daria \\(e = \\dfrac{P}{P^{*}}\\) (no Big Mac: \\(\\dfrac{30}{3} = 10\\) R$/US$, o inverso de 0,1 US$/R$).</p>
   </section>`,
   pegadinhas: [
     "IEL > 0 é SAÍDA de capitais; IEL < 0 é ENTRADA.",
@@ -416,10 +416,10 @@ const AULAS = [
     ["IEL > 0 significa…", "Saída líquida de capitais."],
     ["Investimento direto × carteira", "Direto: opera o negócio lá fora (Magalu no Uruguai). Carteira: compra ações/títulos estrangeiros."],
     ["Identidade das contas externas", "EL = IEL (o que se exporta a mais vira ativo estrangeiro)."],
-    ["Câmbio real (fórmula da Aula 4)", "E = e × P* ÷ P."],
-    ["Big Mac: e = 5, P* = US$ 3, P = R$ 30", "E = 5 × 3 ÷ 30 = 0,5 Big Mac BR por Big Mac EUA."],
+    ["Câmbio real (fórmula da Aula 4)", "\\(E = \\dfrac{e \\times P^{*}}{P}\\)"],
+    ["Big Mac: e = 5, P* = US$ 3, P = R$ 30", "\\(E = \\dfrac{5 \\times 3}{30} = 0{,}5\\) Big Mac BR por Big Mac EUA."],
     ["Lei do preço único", "Um bem deve custar o mesmo em todo lugar; a arbitragem iguala os preços."],
-    ["PPC", "Uma unidade de moeda compra a mesma quantidade de bens em todo país. e = P*/P."],
+    ["PPC", "Uma unidade de moeda compra a mesma quantidade de bens em todo país: \\(e = \\dfrac{P^{*}}{P}\\)."],
     ["2 limitações da PPC", "Bens não comercializáveis e bens que não são substitutos perfeitos."],
     ["6 determinantes de EL", "Preferências, preços aqui e lá, rendas aqui e lá, câmbio, custo de transporte, políticas."],
     ["4 determinantes de IEL", "Juros reais externos, juros reais internos, risco percebido, políticas sobre ativos internos."]
@@ -437,7 +437,7 @@ const AULAS = [
   <div class="tldr"><b>Em uma frase:</b> dois mercados ligados. No de <b>fundos emprestáveis</b> se define a taxa de juros <b>r</b>; o r define o <b>IEL</b>; o IEL é a <b>oferta de reais</b> no mercado de câmbio, que define o câmbio real <b>E</b>; e o E define as exportações líquidas, com <b>EL = IEL</b>.</div>
 
   <section class="sec">
-    <h3><span class="n">1</span> A identidade-chave: <span class="f">S = I + IEL</span></h3>
+    <h3><span class="n">1</span> A identidade-chave: <span class="f">\\(S = I + IEL\\)</span></h3>
     <p>De Y = C + I + G + EL, temos Y − C − G = I + EL, ou seja, <b>S = I + EL</b>. Como EL = IEL: <b>S = I + IEL</b>. Cada real poupado financia ou capital <b>nacional</b> (I) ou um ativo <b>estrangeiro</b> (IEL).</p>
     <div class="ex"><b>Q2:</b> S = 500 e I = 380 → IEL = 500 − 380 = <b>120</b> (saída de capitais) e, portanto, EL = 120.</div>
   </section>
@@ -610,8 +610,8 @@ const AULAS = [
     ["Efeito taxa de juros", "P ↑ → mais demanda por dinheiro → vende títulos → r ↑ → I ↓."],
     ["Efeito taxa de câmbio", "P ↑ → r ↑ → capital estrangeiro entra → moeda aprecia → EL ↓."],
     ["O que desloca a DA?", "Qualquer mudança em C, I, G ou EL que não seja causada por P."],
-    ["Y_N (produto potencial)", "Produto com desemprego na taxa natural. Depende de L, K, H, recursos naturais e tecnologia."],
-    ["Por que a OAlp é vertical?", "Y_N depende de fatores reais, não de P (dicotomia clássica)."],
+    ["\\(Y_N\\) (produto potencial)", "Produto com desemprego na taxa natural. Depende de L, K, H, recursos naturais e tecnologia."],
+    ["Por que a OAlp é vertical?", "\\(Y_N\\) depende de fatores reais, não de P (dicotomia clássica)."],
     ["Exemplos que deslocam a OAlp", "Imigração, mais graduados, novas fábricas, descobertas minerais, tecnologia (→); tragédias que destroem capital (←)."],
     ["Inclinação da OAcp", "Positiva no curto prazo (1–2 anos)."]
   ]
@@ -641,7 +641,7 @@ const AULAS = [
 
   <section class="sec">
     <h3><span class="n">2</span> A equação da oferta agregada</h3>
-    <div class="f big">Y = Y<sub>N</sub> + a (P − P<sub>E</sub>), com a &gt; 0</div>
+    <div class="f big">\\(Y = Y_N + a\\,(P - P_E), \\quad a > 0\\)</div>
     <p><b>a</b> mede o quanto Y responde a uma surpresa de preços.</p>
     <div class="grid3">
       <div class="box"><b>P &gt; P<sub>E</sub></b><br>Y &gt; Y<sub>N</sub><br><span class="muted">Q4: 1.000 + 4×(110−100) = 1.040</span></div>
@@ -686,22 +686,22 @@ const AULAS = [
     <div class="quote">“O longo prazo é um guia enganoso para os negócios atuais. No longo prazo, estaremos todos mortos.”<span>— J. M. Keynes, <i>A Teoria Geral do Emprego, do Juro e da Moeda</i> (1936). Recessões podem vir de demanda insuficiente; o governo deve agir sobre a DA.</span></div>
   </section>`,
   pegadinhas: [
-    "P_E ↑ desloca a OAcp para a ESQUERDA (e não para a direita).",
+    "\\(P_E\\) ↑ desloca a OAcp para a ESQUERDA (e não para a direita).",
     "Choque de oferta adverso = P ↑ e Y ↓ (estagflação). Choque de demanda negativo = P ↓ e Y ↓.",
     "Acomodar o choque de oferta recupera Y, mas deixa P permanentemente mais alto.",
-    "Sem intervenção, após queda da DA, a economia volta a Y_N com P MAIS BAIXO.",
-    "As 3 teorias têm em comum uma imperfeição temporária que liga Y a (P − P_E).",
-    "No longo prazo, P_E = P e Y = Y_N."
+    "Sem intervenção, após queda da DA, a economia volta a \\(Y_N\\) com P MAIS BAIXO.",
+    "As 3 teorias têm em comum uma imperfeição temporária que liga Y a \\((P - P_E)\\).",
+    "No longo prazo, \\(P_E = P\\) e \\(Y = Y_N\\)."
   ],
   cards: [
-    ["Teoria da rigidez salarial", "Salário nominal fixado antes com base em P_E; se P > P_E, a receita sobe sem o custo subir → Y ↑."],
+    ["Teoria da rigidez salarial", "Salário nominal fixado antes com base em \\(P_E\\); se \\(P > P_E\\), a receita sobe sem o custo subir → Y ↑."],
     ["Teoria dos preços rígidos", "Custos de menu: quem demora a reajustar fica relativamente barato e vende mais."],
     ["Teoria das percepções equivocadas", "Firmas confundem alta geral de preços com alta do preço relativo do próprio produto."],
-    ["Equação da OAcp", "Y = Y_N + a(P − P_E), com a > 0."],
-    ["Efeito de P_E ↑ na OAcp", "Desloca para a esquerda (menos produto para cada P)."],
+    ["Equação da OAcp", "\\(Y = Y_N + a\\,(P - P_E)\\), com \\(a > 0\\)."],
+    ["Efeito de \\(P_E\\) ↑ na OAcp", "Desloca para a esquerda (menos produto para cada P)."],
     ["4 passos para analisar flutuações", "Qual curva; para que lado; equilíbrio de curto prazo; ajuste para o longo prazo."],
     ["Estagflação", "P ↑ e Y ↓ ao mesmo tempo, típico de choque adverso de oferta (OAcp ←)."],
-    ["Acomodar um choque de oferta", "Expandir a DA: Y volta a Y_N, mas P fica mais alto."],
+    ["Acomodar um choque de oferta", "Expandir a DA: Y volta a \\(Y_N\\), mas P fica mais alto."],
     ["Hipoteca 'underwater'", "Dívida da hipoteca maior que o valor de mercado da casa."],
     ["Ideia central de Keynes", "Recessões podem vir de demanda insuficiente; política deve agir sobre a DA. 'No longo prazo, estaremos todos mortos.'"]
   ]
@@ -850,26 +850,26 @@ const AULAS = [
 
 // Formulário geral
 const FORMULAS = [
-  ["Aula 1", "Identidade do PIB", "Y = C + I + G + EL", "EL = X − M"],
-  ["Aula 1", "PIB nominal", "Σ P_atual × Q_atual", "preços e quantidades do próprio ano"],
-  ["Aula 1", "PIB real", "Σ P_base × Q_atual", "preços do ano-base"],
-  ["Aula 1", "Deflator do PIB", "100 × Nominal ÷ Real", "nível geral de preços"],
-  ["Aula 1", "Inflação pelo deflator", "(D₂ − D₁) ÷ D₁", "variação percentual"],
-  ["Aula 1", "PIB real a partir do deflator", "100 × Nominal ÷ Deflator", "usado na Q18"],
-  ["Aula 2", "Poupança privada", "Y − T − C", ""],
-  ["Aula 2", "Poupança pública", "T − G", "> 0 superávit; < 0 déficit"],
-  ["Aula 2", "Poupança nacional", "S = Y − C − G", "economia fechada: S = I"],
-  ["Aula 3", "Razão de reserva", "R = Reservas ÷ Depósitos", ""],
-  ["Aula 3", "Multiplicador monetário", "m = 1 ÷ R", "oferta máx. = reservas × 1/R"],
-  ["Aula 4", "Exportações líquidas", "EL = X − M", ""],
+  ["Aula 1", "Identidade do PIB", "\\(Y = C + I + G + EL\\)", "\\(EL = X - M\\)"],
+  ["Aula 1", "PIB nominal", "\\(\\sum P_{\\text{atual}} \\times Q_{\\text{atual}}\\)", "preços e quantidades do próprio ano"],
+  ["Aula 1", "PIB real", "\\(\\sum P_{\\text{base}} \\times Q_{\\text{atual}}\\)", "preços do ano-base"],
+  ["Aula 1", "Deflator do PIB", "\\(\\text{Deflator} = 100 \\times \\dfrac{\\text{PIB nominal}}{\\text{PIB real}}\\)", "nível geral de preços"],
+  ["Aula 1", "Inflação pelo deflator", "\\(\\pi = \\dfrac{D_2 - D_1}{D_1}\\)", "variação percentual"],
+  ["Aula 1", "PIB real a partir do deflator", "\\(\\text{PIB real} = 100 \\times \\dfrac{\\text{PIB nominal}}{\\text{Deflator}}\\)", "usado na Q18"],
+  ["Aula 2", "Poupança privada", "\\(S_{\\text{priv}} = Y - T - C\\)", ""],
+  ["Aula 2", "Poupança pública", "\\(S_{\\text{pub}} = T - G\\)", "> 0 superávit; < 0 déficit"],
+  ["Aula 2", "Poupança nacional", "\\(S = Y - C - G\\)", "economia fechada: S = I"],
+  ["Aula 3", "Razão de reserva", "\\(R = \\dfrac{\\text{Reservas}}{\\text{Depósitos}}\\)", ""],
+  ["Aula 3", "Multiplicador monetário", "\\(m = \\dfrac{1}{R}\\)", "oferta máxima = reservas × m"],
+  ["Aula 4", "Exportações líquidas", "\\(EL = X - M\\)", ""],
   ["Aula 4", "Investimento externo líquido", "IEL = ativos externos comprados por residentes − ativos internos comprados por estrangeiros", "> 0 saída; < 0 entrada"],
-  ["Aula 4", "Identidade externa", "EL = IEL", ""],
-  ["Aula 4", "Câmbio real", "E = e × P* ÷ P", "Big Mac: 5 × 3 ÷ 30 = 0,5"],
-  ["Aula 4", "PPC", "e = P* ÷ P", "convenção do Mankiw"],
-  ["Aula 5", "Poupança na economia aberta", "S = I + IEL", "IEL = S − I"],
-  ["Aula 6.2", "Oferta agregada de curto prazo", "Y = Y_N + a (P − P_E)", "a > 0; LP: P = P_E e Y = Y_N"],
-  ["Aula 7.2", "Efeito direto do corte de impostos", "ΔC = PMgC × ΔT", "R$ 100 × 0,6 = R$ 60"],
-  ["Aula 7.2", "Custo da desinflação", "5% do PIB × pontos reduzidos", "4% → 2% = 10% do PIB"]
+  ["Aula 4", "Identidade externa", "\\(EL = IEL\\)", ""],
+  ["Aula 4", "Câmbio real", "\\(E = \\dfrac{e \\times P^{*}}{P}\\)", "Big Mac: \\(\\dfrac{5 \\times 3}{30} = 0{,}5\\)"],
+  ["Aula 4", "PPC", "\\(e = \\dfrac{P^{*}}{P}\\)", "convenção do Mankiw"],
+  ["Aula 5", "Poupança na economia aberta", "\\(S = I + IEL\\)", "\\(IEL = S - I\\)"],
+  ["Aula 6.2", "Oferta agregada de curto prazo", "\\(Y = Y_N + a\\,(P - P_E)\\)", "a > 0; no longo prazo, P = P_E e Y = Y_N"],
+  ["Aula 7.2", "Efeito direto do corte de impostos", "\\(\\Delta C = \\text{PMgC} \\times \\Delta T\\)", "R$ 100 × 0,6 = R$ 60"],
+  ["Aula 7.2", "Custo da desinflação", "\\(\\text{custo} = 5\\% \\text{ do PIB} \\times \\text{pontos reduzidos}\\)", "4% → 2% = 10% do PIB"]
 ];
 
 // Regimes do estudo empírico (valores aproximados; nos períodos "quase acíclicos" o estudo não informa r)

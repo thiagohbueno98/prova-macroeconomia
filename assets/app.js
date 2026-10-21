@@ -483,9 +483,10 @@ LAB.cambio = el => {
     const eps = e * ps, E = p ? eps / p : 0, ppc = ps ? p / ps : 0;
     $('#cxRo', el).innerHTML = `<div><small>Big Mac EUA em R$</small><b>R$ ${fmt(eps, 2)}</b></div><div><small>Câmbio real E</small><b>${fmt(E, 2)}</b></div><div><small>e pela PPC</small><b>${fmt(ppc, 2)} R$/US$</b></div>`;
     const cmp = near(E, 1) ? 'Os dois lanches custam o mesmo — exatamente o que a PPC prevê.' : E < 1 ? `O lanche americano custa <b>${fmt(E, 2)}</b> lanche brasileiro: comprar lá fora está <b>barato</b> para nós. Os bens brasileiros estão relativamente <b>caros</b> (real “forte” em termos reais).` : `O lanche americano custa <b>${fmt(E, 2)}</b> lanches brasileiros: comprar lá fora está <b>caro</b>. Os bens brasileiros estão relativamente <b>baratos</b>.`;
-    $('#cxTxt', el).innerHTML = `<p>E = e × P* ÷ P = ${fmt(e, 2)} × ${fmt(ps, 2)} ÷ ${fmt(p, 2)} = <b>${fmt(E, 2)}</b> Big Mac brasileiro por Big Mac americano. ${cmp}</p>
-      <p>Pela PPC, o câmbio que igualaria os preços seria <b>${fmt(ppc, 2)} R$/US$</b> (= P ÷ P*). ${near(e, ppc) ? 'O câmbio atual já é esse.' : e < ppc ? `Como o câmbio atual (${fmt(e, 2)}) é menor, o real está <b>mais valorizado</b> do que a PPC prevê.` : `Como o câmbio atual (${fmt(e, 2)}) é maior, o real está <b>mais desvalorizado</b> do que a PPC prevê.`}</p>
-      <p class="muted">Na convenção do Mankiw (slide da PPC), o mesmo resultado aparece como e = P*/P = ${ps && p ? fmt(ps / p, 3) : '—'} US$ por real — o inverso.</p>`;
+    const tx = (n, d) => fmt(n, d).replace(',', '{,}');
+    $('#cxTxt', el).innerHTML = `<p>\\(E = \\dfrac{e \\times P^{*}}{P} = \\dfrac{${tx(e, 2)} \\times ${tx(ps, 2)}}{${tx(p, 2)}} = ${tx(E, 2)}\\) Big Mac brasileiro por Big Mac americano. ${cmp}</p>
+      <p>Pela PPC, o câmbio que igualaria os preços seria <b>${fmt(ppc, 2)} R$/US$</b> (\\(= \\dfrac{P}{P^{*}}\\)). ${near(e, ppc) ? 'O câmbio atual já é esse.' : e < ppc ? `Como o câmbio atual (${fmt(e, 2)}) é menor, o real está <b>mais valorizado</b> do que a PPC prevê.` : `Como o câmbio atual (${fmt(e, 2)}) é maior, o real está <b>mais desvalorizado</b> do que a PPC prevê.`}</p>
+      <p class="muted">Na convenção do Mankiw (slide da PPC), o mesmo resultado aparece como \\(e = \\dfrac{P^{*}}{P} = ${ps && p ? tx(ps / p, 3) : '—'}\\) US$ por real — o inverso.</p>`;
     const X = g('ex'), M = g('im'), A = g('aa'), B = g('ab'), EL = X - M, IEL = A - B;
     $('#elRo', el).innerHTML = `<div><small>EL = X − M</small><b class="${EL < 0 ? 'no' : 'ok'}">${fmt(EL, 0)}</b></div><div><small>IEL</small><b>${fmt(IEL, 0)}</b></div>`;
     $('#elTxt', el).innerHTML = `<p>${EL > 0 ? '<b>Superávit</b> comercial' : EL < 0 ? '<b>Déficit</b> comercial' : 'Equilíbrio comercial'} · ${IEL > 0 ? '<b>Saída</b> líquida de capitais (IEL > 0)' : IEL < 0 ? '<b>Entrada</b> líquida de capitais (IEL < 0)' : 'IEL = 0'}.</p>
@@ -835,8 +836,8 @@ function renderSimResult(el) {
     </div>
     <div class="btns" style="margin-top:14px"><button class="btn pri" data-act="sim-new">Novo simulado</button>${wrong.length ? `<button class="btn" data-act="sim-redo">Refazer só as ${wrong.length} erradas</button>` : ''}</div></div>
     <h4 class="h2">Correção</h4>
-    ${res.map(r => { const m = MODS[r.mi], q = m.qs[r.qi]; return `<details class="rev" ${r.ok ? '' : 'open'} style="--a:${m.cor}"><summary>${r.ok ? '✅' : r.a === undefined ? '⬜' : '❌'} ${r.k + 1}. <span class="q-tag">${m.id} · Q${r.qi + 1}</span> ${esc(q.q.slice(0, 90))}${q.q.length > 90 ? '…' : ''}</summary>
-      ${q.q.length > 90 ? `<p>${esc(q.q)}</p>` : ''}<p>Sua resposta: <b class="${r.ok ? 'ok' : 'no'}">${r.a === undefined ? 'em branco' : esc(q.o[r.a])}</b></p>${r.ok ? '' : `<p>Correta: <b class="ok">${esc(q.o[q.c])}</b></p>`}<p class="muted">${esc(q.e)}</p></details>`; }).join('')}`;
+    ${res.map(r => { const m = MODS[r.mi], q = m.qs[r.qi]; return `<details class="rev" ${r.ok ? '' : 'open'} style="--a:${m.cor}"><summary>${r.ok ? '✅' : r.a === undefined ? '⬜' : '❌'} ${r.k + 1}. <span class="q-tag">${m.id} · Q${r.qi + 1}</span> ${q.q.length > 90 && !q.q.includes('\\(') ? esc(q.q.slice(0, 90)) + '…' : esc(q.q)}</summary>
+      ${q.q.length > 90 && !q.q.includes('\\(') ? `<p>${esc(q.q)}</p>` : ''}<p>Sua resposta: <b class="${r.ok ? 'ok' : 'no'}">${r.a === undefined ? 'em branco' : esc(q.o[r.a])}</b></p>${r.ok ? '' : `<p>Correta: <b class="ok">${esc(q.o[q.c])}</b></p>`}<p class="muted">${esc(q.e)}</p></details>`; }).join('')}`;
 }
 function simAct(act, v) {
   if (act === 'sim-mod') { const i = +v; simCfg.mods = simCfg.mods.includes(i) ? simCfg.mods.filter(x => x !== i) : simCfg.mods.concat(i).sort(); }
@@ -1015,4 +1016,23 @@ $('#themeBtn').addEventListener('click', () => {
   document.documentElement.setAttribute('data-theme', t); LS.set('macro_ita_theme', t);
 });
 window.addEventListener('hashchange', render);
+
+/* ---------- fórmulas matemáticas (KaTeX) ----------
+   Qualquer trecho entre \( e \) vira fórmula. Um observador renderiza o que
+   for inserido na tela; se o KaTeX não carregar, o texto aparece como está. */
+const MATH_OPTS = { delimiters: [{ left: '\\(', right: '\\)', display: false }, { left: '\\[', right: '\\]', display: true }], throwOnError: false, strict: false };
+function typeset(el) { if (window.renderMathInElement && el) renderMathInElement(el, MATH_OPTS); }
+const mathQueue = new Set(); let mathPending = false;
+new MutationObserver(recs => {
+  for (const r of recs) for (const n of r.addedNodes) {
+    const el = n.nodeType === 1 ? n : n.parentElement;
+    if (el && !el.closest('.katex')) mathQueue.add(el);
+  }
+  if (mathQueue.size && !mathPending) {
+    mathPending = true;
+    requestAnimationFrame(() => { mathPending = false; const els = [...mathQueue]; mathQueue.clear(); els.forEach(e => e.isConnected && typeset(e)); });
+  }
+}).observe(document.getElementById('view'), { childList: true, subtree: true });
+
 render();
+typeset($('#view'));
